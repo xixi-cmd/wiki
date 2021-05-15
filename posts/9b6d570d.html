@@ -1,0 +1,132 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>一个Java程序员眼中的Mac OS（系列七：Java 开发环境）</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="
+
+
+本文初衷
+整理自己脑袋中、收藏中的那些资料，来一次清空，让自己重新开始。
+帮助 Mac 后来者，减少他/她入门成本
+如果你不是 Java 开发者，本章对你没啥太大意义。
+
+先总结
+本篇文章没有细到一步一步截图的地步，需要有 Windows 下 Java 开发经验，以及 Linux 部署 Java 环境为基础。
+其实 Java 相关的开发环境，不管是 Windows、Mac、Linux 其实本质都一样的，都是改路径，改系统变量，如果你还用 IntelliJ IDEA 这种 IDE，有些压根就不需要系统变量了。
+各系统的路径差异说明：
+Windows 的路径结构是这样的：D:\360Downloads\HotFix
+Mac/Linux 的路径结构是这样的：/usr/local
+没用过 Unix 系统的人会.."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">一个Java程序员眼中的Mac OS（系列七：Java 开发环境）</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">点击返回顶部</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E6%96%87%E5%88%9D%E8%A1%B7"><span class="toc-text">本文初衷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E6%80%BB%E7%BB%93"><span class="toc-text">先总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDK"><span class="toc-text">JDK</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IntelliJ-IDEA"><span class="toc-text">IntelliJ IDEA</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Maven"><span class="toc-text">Maven</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Tomcat"><span class="toc-text">Tomcat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL"><span class="toc-text">MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git"><span class="toc-text">Git</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9D%9F%E8%AF%AD"><span class="toc-text">结束语</span></a></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/Java"><i class="tag post-item-tag">Java</i></a><a href="/tags/Mac"><i class="tag post-item-tag">Mac</i></a></header><h1 class="mt-0 mb-1 is-family-serif" id="postTitle">一个Java程序员眼中的Mac OS（系列七：Java 开发环境）</h1><time class="has-text-grey" datetime="2016-11-30T15:21:40.000Z">2016-11-30</time><article class="mt-2 post-content"><span id="more"></span>
+
+<p><img src="http://img.youmeek.com/2016/Mac-Java.gif" alt="Java 开发环境"></p>
+<h2 id="本文初衷"><a href="#本文初衷" class="headerlink" title="本文初衷"></a>本文初衷</h2><ul>
+<li>整理自己脑袋中、收藏中的那些资料，来一次清空，让自己重新开始。</li>
+<li>帮助 Mac 后来者，减少他/她入门成本</li>
+<li>如果你不是 Java 开发者，本章对你没啥太大意义。</li>
+</ul>
+<h2 id="先总结"><a href="#先总结" class="headerlink" title="先总结"></a>先总结</h2><ul>
+<li>本篇文章没有细到一步一步截图的地步，需要有 Windows 下 Java 开发经验，以及 Linux 部署 Java 环境为基础。</li>
+<li>其实 Java 相关的开发环境，不管是 Windows、Mac、Linux 其实本质都一样的，都是改路径，改系统变量，如果你还用 IntelliJ IDEA 这种 IDE，有些压根就不需要系统变量了。</li>
+<li>各系统的路径差异说明：<ul>
+<li>Windows 的路径结构是这样的：<code>D:\360Downloads\HotFix</code></li>
+<li>Mac/Linux 的路径结构是这样的：<code>/usr/local</code></li>
+<li>没用过 Unix 系统的人会很不爽这种路径结构，其实嘛我觉得是 Windows 那种路径结构不好。</li>
+</ul>
+</li>
+<li>系统变量的更改位置，Mac/Linux 一般都是习惯在终端改，Windows 一般在 GUI，但是本质 Windows 也是可以在 cmd 改的，只是 Windows 的终端真的是太差劲了。</li>
+</ul>
+<h2 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h2><ul>
+<li>官网下载 JDK7：<a target="_blank" rel="noopener" href="http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html">http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html</a></li>
+<li>官网下载 JDK8：<a target="_blank" rel="noopener" href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html</a></li>
+<li>Java 开发环境理论上一般都是这个优先安装的。</li>
+<li>安装过程和 Windows 没啥区别，都是下一步下一步，只是比 Windows 简单，连安装路径都不需要改而已，所以这里不截图了。</li>
+<li>我这边不管是 Windows、Mac、Linux，只要开发环境，JAVA_HOME 我都是 JDK8，同时还装有 JDK6、JDK7，在使用 IntelliJ IDEA 的时候，我可以同时使用三个版本的 JDK。</li>
+<li>JDK 的环境变量是要添加的，我这边可以贴一下。</li>
+<li>在本系列前面的章节中我已经说明了，我这边是 Zsh 环境，所以我需要编辑这个配置文件：<code>vim ~/.zshrc</code></li>
+<li>如果你是 bash，你需要编辑的是这个：<code>vim ~/.bash_profile</code></li>
+<li>修改后之后刷新配置文件我是：<code>source ~/.zshrc</code></li>
+</ul>
+<pre><code class="bash"># JDK 1.8
+JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home
+JRE_HOME=$JAVA_HOME/jre
+PATH=$PATH:$JAVA_HOME/bin
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+export JAVA_HOME
+export JRE_HOME
+export PATH
+export CLASSPATH
+</code></pre>
+<h2 id="IntelliJ-IDEA"><a href="#IntelliJ-IDEA" class="headerlink" title="IntelliJ IDEA"></a>IntelliJ IDEA</h2><ul>
+<li>官网下载：<a target="_blank" rel="noopener" href="http://www.jetbrains.com/idea/">http://www.jetbrains.com/idea/</a></li>
+<li>最优秀的 IDE，没有之一，我所有的生产力硬件设备都是为了支持它而购买的，所以内存一定要够大。</li>
+<li>下面的 Maven、Tomcat 都是依赖于 IntelliJ IDEA 运行的，所以本质上我只要搞定 IntelliJ IDEA，其他的 Java 开发环境 IntelliJ IDEA 都会帮我们解决。</li>
+<li>关于 IntelliJ IDEA Mac 下安装/配置等相关，请看我写的这个系列，里面有详细说明：<a target="_blank" rel="noopener" href="https://github.com/judasn/IntelliJ-IDEA-Tutorial">IntelliJ IDEA 简体中文专题教程</a></li>
+<li>在 IntelliJ IDEA 有几个特别的地方我单独拿出来讲讲吧：<ul>
+<li>如果启动 Tomcat 的时候报：<code>Permission denied</code>，你则可以：打开终端，进入 Tomcat\bin 目录，然后执行：<code>chmod 777 *.sh</code></li>
+<li>如果启动 Tomcat 之后，控制台乱码了，并且你确认你在 IntelliJ IDEA 的 Preferences 中设置的控制台字体是支持中文的，那你可以尝试下在 Tomcat VM 参数上加上：<code>-Dfile.encoding=UTF-8</code></li>
+<li>Git 的路径配置：<code>Preferences -- Version Control -- Git -- Path to Git executable</code> 的值是：<code>/usr/local/git/bin/git</code></li>
+<li>如果你已经看过前面的：<a target="_blank" rel="noopener" href="http://code.youmeek.com/2016/11/29/2016/11/Mac-iTerm2/">一个Java程序员眼中的Mac OS（系列六：终端方案iTerm2 + Zsh）</a>，假设你也已经安装了 zsh<ul>
+<li>那你的 IntelliJ IDEA 终端路径可以改成 zsh 的，配置方法在 <code>Preferences -- Tools -- Terminal -- Shell path</code> 的值改为是：<code>/bin/zsh</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>IntelliJ IDEA 在 Mac 下的配置文件保存路径<ul>
+<li>下面内容中：<code>XXXXXX</code>，表示 IntelliJ IDEA 的版本号，IntelliJ IDEA 的配置目录是跟版本号有关系的。</li>
+<li><code>/Users/你的用户名/Library/Application Support/IntelliJIdeaXXXXXX</code>，用于保存安装的插件</li>
+<li><code>/Users/你的用户名/Library/Caches/IntelliJIdeaXXXXXX</code>，用于保存缓存、日志、以及本地的版本控制信息（local history 这个功能）</li>
+<li><code>/Users/你的用户名/Library/Preferences/IntelliJIdeaXXXXXX</code>，用于保存你的个人配置、授权文件，等价于 Windows 下的 <code>config</code> 目录</li>
+</ul>
+</li>
+</ul>
+<h2 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h2><ul>
+<li>官网下载：<a target="_blank" rel="noopener" href="http://maven.apache.org/download.cgi">http://maven.apache.org/download.cgi</a></li>
+<li>Maven 是绿色版的，任何系统都适用。</li>
+<li>安装方式和 Windows、Linux 没啥本质区别，都是把 zip 文件夹解压，然后新增几个系统变量，修改 Maven 配置文件参数。</li>
+<li>如果你不懂 Maven 相关知识可以查看我过去写的这篇文章：<a target="_blank" rel="noopener" href="http://code.youmeek.com/2016/03/09/2016/03/Maven/">构建工具-Maven-相关知识-整理专题</a></li>
+<li>我是把 Maven 解压后，直接把 Windows 的 settings.xml 复制过来，修改下该文件本地仓库的路径，其他没啥可以改的了。</li>
+<li>然后本地仓库的那些依赖包是直接从 Windows 下拷贝过来的，这个是任何系统下都兼容的，不需要额外处理。</li>
+<li>最后再用 IntelliJ IDEA 对 Maven 的配置路径重新做了修改。</li>
+<li>以上这些点都需要你对 Maven 和 IntelliJ IDEA 有了解，对于这两个东西我也在本文章都贴了相关的文章链接，我这里不多说了，学习总是需要花时间的。</li>
+<li>Maven 的环境变量是要添加的，我这边可以贴一下：</li>
+</ul>
+<pre><code class="bash">MAVEN_HOME=/Users/youmeek/my_software/work_software/maven3.3.9
+PATH=$PATH:$MAVEN_HOME/bin
+export MAVEN_HOME
+export PATH
+</code></pre>
+<h2 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h2><ul>
+<li>官网下载 Tomcat 7：<a target="_blank" rel="noopener" href="http://tomcat.apache.org/download-70.cgi">http://tomcat.apache.org/download-70.cgi</a></li>
+<li>官网下载 Tomcat 8：<a target="_blank" rel="noopener" href="http://tomcat.apache.org/download-80.cgi">http://tomcat.apache.org/download-80.cgi</a></li>
+<li>Tomcat 在 Windows 下虽然有安装版本，但是一般开发环境我们都不会下载安装版本的，所以假设你也是下载 zip 的压缩版本，这个版本任何系统都是通用的。</li>
+<li>因为是开发环境，所以不需要配置 CATALINA_HOME 变量，直接用 IntelliJ IDEA 指向 Tomcat 的解压目录即可，如果不懂，还是看我本文上面贴的 IntelliJ IDEA 系列教程地址。</li>
+</ul>
+<h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><ul>
+<li>官网下载 MySQL 5.6：<a target="_blank" rel="noopener" href="http://dev.mysql.com/downloads/mysql/5.6.html#downloads">http://dev.mysql.com/downloads/mysql/5.6.html#downloads</a></li>
+<li>官网下载 MySQL 5.7：<a target="_blank" rel="noopener" href="http://dev.mysql.com/downloads/mysql/">http://dev.mysql.com/downloads/mysql/</a></li>
+<li>MySQL 官网提供的 Mac 系统的安装包，是下一步下一步安装类型的，没啥难度，大家自己试一下。</li>
+<li>有几个点需要注意的是：<ul>
+<li>如何重置 root 密码：<ul>
+<li>打开：<code>系统偏好设置 -- 底部的 MySQL -- 点击：Stop MySQL Server</code>，根据提示输入你的 Mac 用户密码。</li>
+<li>打开终端，输入命令：<code>sudo /usr/local/mysql/bin/mysqld_safe --skip-grant-tables</code>，根据提示输入你的 Mac 用户密码，然后这个终端就这样放着，别动</li>
+<li>再打开一个新的终端，输入命令：<code>sudo /usr/local/mysql/bin/mysql -u root</code>，根据提示输入你的 Mac 用户密码，密码如果无误的话，此时就进入：<code>mysql &gt;</code> 这种状态下。</li>
+<li>在：<code>mysql &gt;</code> 这种状态下输入命令：<code>UPDATE user SET authentication_string=PASSWORD(&#39;123456&#39;) WHERE User=&#39;root&#39;;FLUSH PRIVILEGES;</code>，我把密码重置为：<code>123456</code> 了。</li>
+</ul>
+</li>
+<li>MySQL 配置文件设置<ul>
+<li>Mac 下的 MySQL 默认是没有 my.ini 或是 my.cnf 文件的，需要我们自己复制一个出来。</li>
+<li>通过终端进入这个目录：<code>cd /usr/local/mysql/support-files/</code>，从该目录下随便找一个 <code>.cnf</code> 的文件，复制命名为：<code>my.cnf</code>，然后按照 MySQL 的配置规则配置这个文件。</li>
+<li>然后把这个 <code>my.cnf</code> 的文件复制到 <code>/etc</code> 目录下</li>
+<li>重启 MySQL 服务即可</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h2><ul>
+<li>官网下载：<a target="_blank" rel="noopener" href="http://git-scm.com/download/mac">http://git-scm.com/download/mac</a></li>
+<li>安装过程和 Windows 没啥区别，都是下一步下一步。</li>
+<li>IntelliJ IDEA 对 Git 的支持很好，也不需要额外配置什么，IntelliJ IDEA 的 Git 操作都很便捷强烈使用 IntelliJ IDEA 作为 Git 的 GUI 操作工具。</li>
+</ul>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><ul>
+<li>感谢 JetBrains 这样的公司存在，让我省去很多麻烦。</li>
+<li><img src="http://img.youmeek.com/YouMeek-WX.jpg" alt="YouMeek 公众号"></li>
+</ul>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/posts/d3d1df08.html" title="一个Java程序员眼中的Mac OS（系列八：外设/配件介绍）"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">上一页: 一个Java程序员眼中的Mac OS（系列八：外设/配件介绍）</span></a><a class="button is-default" href="/posts/a256393.html" title="一个Java程序员眼中的Mac OS（系列六：终端方案iTerm2 + Zsh）"><span class="has-text-weight-semibold">下一页: 一个Java程序员眼中的Mac OS（系列六：终端方案iTerm2 + Zsh）</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>

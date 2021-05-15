@@ -1,0 +1,368 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>intro to serverless functions</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="最近喵了下 Introduction to Serverless Functions 视频感觉还不错。下面主要根据视频作者Jason Lengstorf 的ppt 简单做下笔记，最底下会列出相关链接。
+示例代码 示例网站
+
+
+前言serverless 一般分为bass(Backend as a Service)和fass(Function as a Service)两种，今天我们主要学习一下fass，国内云厂商一般称为云函数。简单来说，就是依赖云厂商的平台建设，使我们只关注业务代码，不需要考虑服务器相关内容，也更容易的进行资源的弹性扩容，基于事件驱动，避免闲时资源浪费。
+当然有利也有弊，fass基于Data-shipping架构，即：将数据传输到代码所在处执行，而不是将代码传输到数据所在处执行，因为数据一般.."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">intro to serverless functions</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">点击返回顶部</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0%E7%8E%AF%E5%A2%83"><span class="toc-text">搭建本地环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Boop"><span class="toc-text">Boop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%9C%AC%E5%9C%B0%E6%95%B0%E6%8D%AE"><span class="toc-text">获取本地数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0"><span class="toc-text">获取请求参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%89%E5%8F%96OMDBAPI%E6%95%B0%E6%8D%AE"><span class="toc-text">拉取OMDBAPI数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hasura-Graphql"><span class="toc-text">Hasura Graphql</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netlify-Identify"><span class="toc-text">Netlify Identify</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%85%BE%E8%AE%AF%E4%BA%91%E5%87%BD%E6%95%B0"><span class="toc-text">腾讯云函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="toc-text">相关链接</span></a></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/serverless"><i class="tag post-item-tag">serverless</i></a></header><h1 class="mt-0 mb-1 is-family-serif" id="postTitle">intro to serverless functions</h1><time class="has-text-grey" datetime="2021-05-14T12:31:57.777Z">2021-05-14</time><article class="mt-2 post-content"><p>最近喵了下 <a target="_blank" rel="noopener" href="https://frontendmasters.com/courses/serverless-functions/">Introduction to Serverless Functions</a> 视频感觉还不错。下面主要根据视频作者<code>Jason Lengstorf</code> 的<code>ppt</code> 简单做下笔记，最底下会列出相关链接。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jianchengwang/todo-web/raw/master/serverless/frontendmasters-serverless">示例代码</a> <a target="_blank" rel="noopener" href="https://demo-frontentedmaster-serverless-functions.netlify.app/">示例网站</a></p>
+<span id="more"></span>
+
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><strong>serverless</strong> 一般分为<strong>bass</strong>(Backend as a Service)和<strong>fass</strong>(Function as a Service)两种，今天我们主要学习一下<strong>fass</strong>，国内云厂商一般称为<strong>云函数</strong>。简单来说，就是依赖云厂商的平台建设，使我们只关注业务代码，不需要考虑服务器相关内容，也更容易的进行资源的弹性扩容，基于事件驱动，避免闲时资源浪费。</p>
+<p>当然有利也有弊，<strong>fass</strong>基于<strong>Data-shipping</strong>架构，即：<strong>将数据传输到代码所在处执行</strong>，而不是<strong>将代码传输到数据所在处执行</strong>，因为数据一般都比代码的传输量要大得多。而目前主流的 Faas 平台都是『<strong>将数据传输到代码所在处执行</strong>』这种架构，所以这是 Faas 的最大缺陷，同时也不好维护状态，事务啥的。</p>
+<p>所以，一般就作为一些公共基础建设，比如图片预处理，API网关数据拉取，这种<strong>无状态</strong>的<strong>独立功能</strong>函数。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>今天我们主要使用<strong>node.js</strong>构建我们的函数应用，所以你要先安装下<strong>node.js v12 or higher</strong>，</p>
+<p>需要云服务商<a target="_blank" rel="noopener" href="https://netlify.com/">Netlify</a>跟<a target="_blank" rel="noopener" href="https://hasura.io/">Hasura</a>提供服务，所以需要你有这两个网站的账号，都提供免费额度使用，所以无需担心费用问题。</p>
+<p>还需要，<a target="_blank" rel="noopener" href="http://www.omdbapi.com/">omdbapi</a>，提供模拟数据，所以创建一个<strong>API KEY</strong>即可，</p>
+<p>另外有的网站可能需要科学上网，这个需要你自己解决了。</p>
+<h2 id="搭建本地环境"><a href="#搭建本地环境" class="headerlink" title="搭建本地环境"></a>搭建本地环境</h2><pre><code class="shell"># install the Netlify CLI for local development
+npm install -g netlify-cli@latest
+# clone the starting point for development
+git clone --branch start https://github.com/jlengstorf/frontendmasters-serverless.git
+# recommended use vscode
+code frontendmasters-serverless
+# create functions dir
+cd frontendmasters-serverless
+mkdir functions
+# cofnig functions location
+vim netlify.toml
+[build]
+  command = &quot;npm run build&quot;
+  publish = &quot;_site&quot;
+  functions = &quot;functions&quot;
+</code></pre>
+<p>最终目录结构如下：</p>
+<pre><code class="shell">.eleventy.js
+.env # 环境变量
+.gitignore
+_site
+data # 静态数据
+functions # 函数目录
+netlify.toml # 配置文件
+node_modules
+package.json
+package-lock.json
+README.md
+src # 网站代码
+</code></pre>
+<p>这个看你使用哪个云厂商提供服务了，目录跟配置项可能不一样，本示例使用的是<a target="_blank" rel="noopener" href="https://www.netlify.com/products/functions/">Netlify Functions</a>，</p>
+<p>我们现在就来使用<strong>serverless functions</strong> 搭建一个简单的我看过的电影展示列表，网站静态页面跟样式已经有了，你可以启动服务看下效果</p>
+<pre><code class="shell">ntl dev
+</code></pre>
+<h2 id="Boop"><a href="#Boop" class="headerlink" title="Boop"></a>Boop</h2><pre><code class="shell">cd functions
+vim boop.js
+</code></pre>
+<pre><code class="js">exports.handler = (event, context, callback) =&gt; &#123;
+  // &quot;event&quot; has information about the path, body, headers, etc. of the request
+  console.log(&#39;event&#39;, event)
+  // &quot;context&quot; has information about the lambda environment and user details
+  console.log(&#39;context&#39;, context)
+  // The &quot;callback&quot; ends the execution of the function and returns a response back to the caller
+  return callback(null, &#123;
+    statusCode: 200,
+    body: JSON.stringify(&#123;
+      data: &#39;Boop!&#39;
+    &#125;)
+  &#125;)
+&#125;
+</code></pre>
+<p>可以看到，<strong>serverless functions</strong> 函数结构很简单，就是声明一个方法，预处理，然后执行回调函数。</p>
+<p>当然你直接使用<code>return</code> </p>
+<pre><code class="js">exports.handler = async () =&gt; &#123;
+    return &#123;
+        statusCode: 200,
+        body: &#39;Boop!&#39;
+    &#125;
+&#125;
+</code></pre>
+<p>然后，我们访问<code>http://localhost:8888/.netlify/functions/boop</code>，即可看到返回的数据了</p>
+<h2 id="获取本地数据"><a href="#获取本地数据" class="headerlink" title="获取本地数据"></a>获取本地数据</h2><p>现在我们要从本地，<code>data/movies.json</code> 获取数据，然后渲染在页面上，<code>functions</code> 目录下创建<code>movies.js</code></p>
+<pre><code class="js">//  get movies from local json
+const movies = require(&#39;../data/movies.json&#39;)
+exports.handler = async () =&gt; &#123;
+    return &#123;
+        statusCode: 200,
+        body: JSON.stringify(moviesWithRatings),
+    &#125;
+&#125;
+</code></pre>
+<p>然后<code>src/index.html</code> 请求数据，渲染页面即可</p>
+<pre><code class="html">&lt;script&gt;
+async function initialize() &#123;
+    const movies = await fetch(&#39;/.netlify/functions/movies&#39;).then((response) =&gt;
+      response.json(),
+    );
+
+    const container = document.querySelector(&#39;.movies&#39;);
+    const template = document.querySelector(&#39;#movie-template&#39;);
+
+    movies.forEach((movie) =&gt; &#123;
+      const element = template.content.cloneNode(true);
+
+      const img = element.querySelector(&#39;img&#39;);
+      img.src = movie.poster;
+      img.alt = movie.title;
+
+      element.querySelector(&#39;h2&#39;).innerText = movie.title;
+      element.querySelector(&#39;.tagline&#39;).innerText = movie.tagline;
+
+      container.appendChild(element);
+    &#125;);
+  &#125;
+&lt;/script&gt; 
+</code></pre>
+<h2 id="获取请求参数"><a href="#获取请求参数" class="headerlink" title="获取请求参数"></a>获取请求参数</h2><p>用过<code>event</code>参数获取，<code>functions</code> 目录下创建<code>movie-by-id.js</code></p>
+<pre><code class="js">const movies = require(&#39;../data/movies.json&#39;)
+
+exports.handler = async(&#123; queryStringParameters &#125;) =&gt; &#123;
+    const &#123; id &#125; = queryStringParameters;
+    const moive = movies.find(m =&gt; m.id === id);
+
+    if(!moive) &#123;
+        return &#123;
+            statusCode: 404,
+            body: &#39;Not Found&#39;
+        &#125;
+    &#125;
+
+    return &#123;
+        statusCode: 200,
+        body: JSON.stringify(moive)
+    &#125;
+&#125;
+</code></pre>
+<p>然后访问<code>http://localhost:8888/.netlify/functions/movie-by-id?id=tt2975590</code></p>
+<p>当然<code>event</code>还包含很多其他信息，有兴趣的话可以喵下官方文档，或者，把<code>event</code>返回出来看看。</p>
+<h2 id="拉取OMDBAPI数据"><a href="#拉取OMDBAPI数据" class="headerlink" title="拉取OMDBAPI数据"></a>拉取OMDBAPI数据</h2><p>获取第三方接口，一般需要<strong>API-KEY</strong>提供凭证，一般配置在环境变量里面，</p>
+<pre><code class="shell">vim .env
+OMDB_API_KEY=
+</code></pre>
+<p>这边使用<code>node-fetch</code>请求第三方接口</p>
+<pre><code class="shell">npm install node-fetch
+</code></pre>
+<p>我们这里，通过<strong>OMDBAPI</strong>获取影片的评分信息，调整<code>functions/movies.js</code>代码示例如下：</p>
+<pre><code class="js">
+const &#123; URL &#125; = require(&#39;url&#39;)
+const fetch = require(&#39;node-fetch&#39;)
+
+//  get movies from local json
+const movies = require(&#39;../data/movies.json&#39;)
+
+exports.handler = async () =&gt; &#123;
+
+    const movieScoreApi = new URL(&quot;https://www.omdbapi.com/&quot;);
+    // add the secret API key to the query string
+    movieScoreApi.searchParams.set(&#39;apiKey&#39;, process.env.OMDB_API_KEY)
+
+    const promises = movies.map(movie =&gt; &#123;
+        movieScoreApi.searchParams.set(&#39;i&#39;, movie.id);
+        return fetch(movieScoreApi)
+        .then(response =&gt; response.json())
+        .then(data =&gt; &#123;
+            const scores = data.Ratings;
+            return &#123;
+                ...movie,
+                scores
+            &#125;
+        &#125;)
+    &#125;)
+
+    // awaiting all Promises lets the requests happen in parallel
+    // see: https://lwj.dev/blog/keep-async-await-from-blocking-execution/
+    const moviesWithRatings = await Promise.all(promises);
+
+    return &#123;
+        statusCode: 200,
+        body: JSON.stringify(moviesWithRatings),
+    &#125;
+&#125;
+</code></pre>
+<p><code>src/index.html</code> 代码页面也做相应调整，这里就不多赘述。</p>
+<h2 id="Hasura-Graphql"><a href="#Hasura-Graphql" class="headerlink" title="Hasura Graphql"></a>Hasura Graphql</h2><p><code>movies.json</code>的数据到达一定量的话，一般会存到数据库便于管理，这边使用<strong>Hasura Graphql</strong>，创建一张表<code>movies</code>表存储，并将<code>movies.json</code>数据填充几条到<code>movies</code>表中。</p>
+<p>所以这边也要配置下<strong>Hasura Graphql</strong> 请求的环境变量：</p>
+<pre><code class="shell">vim .env
+HASURA_API_URL=
+HASURA_ADMIN_SECRET=
+</code></pre>
+<p>关于<strong>Hasura Graphql</strong>的使用，语法等可以参考官方文档<a target="_blank" rel="noopener" href="https://hasura.io/docs/1.0/graphql/core/index.html">hasura graphql</a>，</p>
+<p><code>HASURA_ADMIN_SECRET</code> 其实就是<code>NEW ENV VARS</code>即可，</p>
+<p>首先我们写一个工具方法，用来调用<strong>Hasura Graphql</strong>接口，<code>functions/util/hasura.js</code></p>
+<pre><code class="js">const fetch = require(&#39;node-fetch&#39;)
+
+async function query(&#123; query, variables = &#123;&#125; &#125;) &#123;
+    const result = await fetch(process.env.HASURA_API_URL, &#123;
+        method: &#39;POST&#39;,
+        headers: &#123;
+            &#39;Content-Type&#39;: &#39;application/json&#39;,
+            &#39;X-Hasura-Admin-Secret&#39;: process.env.HASURA_ADMIN_SECRET,
+        &#125;,
+        body: JSON.stringify(&#123; query, variables &#125;),
+    &#125;)
+    .then(response =&gt; response.json())
+    .catch(function(e) &#123;
+        console.log(e);
+    &#125;);
+    // TODO send back helpful information if there are errors
+
+    console.info(result)
+    return result.data;
+&#125;
+
+exports.query = query;
+</code></pre>
+<p>然后再调整一下，<code>functions/movies.js</code></p>
+<pre><code class="js">
+const &#123; query &#125; = require(&#39;./util/hasura&#39;);
+
+exports.handler = async () =&gt; &#123;
+
+    // get movies from db
+    const &#123; movies &#125; = await query(&#123;
+        query: `
+            query &#123;
+                movies &#123;
+                    id
+                    title
+                    tagline
+                    poster
+                &#125;
+            &#125;
+        `,
+    &#125;);
+
+    ...other code
+
+    return &#123;
+        statusCode: 200,
+        body: JSON.stringify(moviesWithRatings),
+    &#125;
+&#125;
+</code></pre>
+<p>然后再写个添加方法<code>functions/add-movie.js</code></p>
+<pre><code class="js">const &#123; query &#125; = require(&#39;./util/hasura&#39;)
+
+exports.handler = async function(event) &#123;
+    const &#123; id, title, tagline, poster &#125; = JSON.parse(event.body);
+
+    const result = await query(&#123;
+        query: `
+            mutation CreateMovie($id: String!, $poster: String!, $tagline: String!, $title: String!) &#123;
+                insert_movies_one(object: &#123;id: $id, poster: $poster, tagline: $tagline, title: $title&#125;) &#123;
+                    id
+                    poster
+                    tagline
+                    title
+                &#125;
+            &#125;
+        `,
+        variables: &#123; id, title, tagline, poster &#125;,
+    &#125;);
+
+    return &#123;
+        statusCode: 200,
+        body: JSON.stringify(result),
+    &#125;;
+&#125;
+</code></pre>
+<p>调整下添加页面，<code>src/admin.html</code></p>
+<pre><code class="html">&lt;script&gt;
+  async function handleSubmit(event) &#123;
+    event.preventDefault();
+    const data = new FormData(event.target);
+    const result = await fetch(&#39;/.netlify/functions/add-movie&#39;, &#123;
+      method: &#39;POST&#39;,
+      body: JSON.stringify(&#123;
+        id: data.get(&#39;id&#39;),
+        title: data.get(&#39;title&#39;),
+        tagline: data.get(&#39;tagline&#39;),
+        poster: data.get(&#39;poster&#39;),
+      &#125;),
+    &#125;).then((response) =&gt; &#123;
+      document.querySelector(
+        &#39;.message&#39;,
+      ).innerText = `Response: $&#123;response.status&#125; — $&#123;response.statusText&#125;`;
+    &#125;);
+  &#125;
+
+  document.querySelector(&#39;#add-movie&#39;).addEventListener(&#39;submit&#39;, handleSubmit);
+&lt;/script&gt;
+</code></pre>
+<h2 id="Netlify-Identify"><a href="#Netlify-Identify" class="headerlink" title="Netlify Identify"></a>Netlify Identify</h2><p>网站一般要进行身份验证，然后不同身份认证有不同的操作权限。比如我的影片列表，我可以进行添加编辑操作，其他人只能进行浏览。所以，一般要引入身份认证，如果从头自己搞登录逻辑，可能比较繁琐，一般也是独立出一个认证的微服务。</p>
+<p>这边简单的使用<a target="_blank" rel="noopener" href="https://docs.netlify.com/visitor-access/identity/">Netlify Identify</a>来进行网站的身份认证，如果你使用其他云厂商，这部分可以略过</p>
+<p>此时需要我们先部署一个网站，你可以直接使用<code>netlify-cli</code></p>
+<pre><code class="shell">ntl init
+</code></pre>
+<p>我这边不知道是因为网络原因还是啥的，<code>netlify-cli</code>认证不了，所以我直接登录<a target="_blank" rel="noopener" href="https://app.netlify.com/">app.netlify</a>操作了，部署后，可以直接<a target="_blank" rel="noopener" href="https://demo-frontentedmaster-serverless-functions.netlify.app/">在线访问</a>，</p>
+<p><strong>app.netlify</strong> 对应站点管理，对我们刚部署的站点启用<code>Identify</code>，</p>
+<p><strong>Netlify Identify</strong> 已经集成了UI界面，所以我们要引入 <a target="_blank" rel="noopener" href="https://github.com/netlify/netlify-identity-widget">netlify-identity-widget</a></p>
+<pre><code class="html">&lt;!-- include the widget --&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;https://identity.netlify.com/v1/netlify-identity-widget.js&quot;&gt;&lt;/script &gt;
+</code></pre>
+<p>这里，我只在<code>src/admin.html</code>  <code>src/login.html</code>引入了，</p>
+<p>这边我想要实现的效果是，用户登录才能访问<code>src/admin</code>页面进行添加电影的操作，</p>
+<p>首先，我们在<code>src/login.html</code> 添加如下代码：</p>
+<pre><code class="html">&lt;div data-netlify-identity-button&gt;&lt;/div&gt;
+&lt;script
+  type=&quot;text/javascript&quot;
+  src=&quot;https://identity.netlify.com/v1/netlify-identity-widget.js&quot;
+&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  function handleLogin(user) &#123;
+    if (!user || !user.token) &#123;
+      return;
+    &#125;
+
+    // if we get here, we have an active user; redirect to the admin page!
+    window.location.pathname = &#39;/admin/&#39;;
+  &#125;
+
+  window.netlifyIdentity.on(&#39;init&#39;, handleLogin);
+  window.netlifyIdentity.on(&#39;login&#39;, handleLogin);
+&lt;/script&gt;
+</code></pre>
+<p>调整<code>src/admin.html</code> 代码，</p>
+<pre><code class="html">&lt;script
+  type=&quot;text/javascript&quot;
+  src=&quot;https://identity.netlify.com/v1/netlify-identity-widget.js&quot;
+&gt;&lt;/script&gt;
+&lt;script&gt;
+
+  function handleIdentityEvent(user) &#123;
+    if (user &amp;&amp; user.token) &#123;
+      return;
+    &#125;
+
+    window.location.pathname = &#39;/login/&#39;;
+  &#125;
+
+  netlifyIdentity.on(&#39;init&#39;, handleIdentityEvent);
+  netlifyIdentity.on(&#39;logout&#39;, handleIdentityEvent);
+
+  document.querySelector(&#39;.logout&#39;).addEventListener(&#39;click&#39;, (event) =&gt; &#123;
+    event.preventDefault();
+    netlifyIdentity.logout();
+  &#125;);
+    
+  ....
+</code></pre>
+<h2 id="腾讯云函数"><a href="#腾讯云函数" class="headerlink" title="腾讯云函数"></a>腾讯云函数</h2><p>这里简单举个小例子，比如做一个返回json数据的接口，触发管理为<strong>API网关触发器</strong>，可以看到语言规范基本一致。</p>
+<pre><code class="js">&#39;use strict&#39;;
+
+exports.main_handler = (event, context, callback) =&gt; &#123;
+    console.log(&quot;Hello World&quot;)
+    console.log(event)
+    console.log(event[&quot;non-exist&quot;])
+    console.log(context)
+    callback(null, require(&#39;data/fooddata.js&#39;))
+&#125;;
+</code></pre>
+<p>跟据自己的需要选择合适的云平台，当然也有很多完善云平台使用的<code>serverless</code>框架，</p>
+<p>本篇仅作为一个简单的入门<code>demo</code>，回调方法也不仅仅是返回<code>JSON</code>，也有很多<code>OUTPUT</code>形式，各个云平台也会跟据自己现有的服务，提供各种集成机制，感兴趣的自己自行扩展阅读。</p>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><p><a target="_blank" rel="noopener" href="https://github.com/serverless/serverless">github:serverless</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/anaibol/awesome-serverless">github:awesome-serverless</a></p>
+<p><a target="_blank" rel="noopener" href="https://frontendmasters.com/courses/serverless-functions/">Introduction to Serverless Functions</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jlengstorf/frontendmasters-serverless">gihub:frontendmasters-serverless</a></p>
+<p><a href="netlify.com">netlify</a></p>
+<p><a target="_blank" rel="noopener" href="http://hasura.io/">hasura</a></p>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/posts/70c79a9.html" title="Python中的flask-todolist"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">上一页: Python中的flask-todolist</span></a><a class="button is-default" href="/posts/87368208.html" title="我们来聊聊JAVA8"><span class="has-text-weight-semibold">下一页: 我们来聊聊JAVA8</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>

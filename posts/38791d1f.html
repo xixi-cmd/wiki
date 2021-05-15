@@ -1,0 +1,182 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>gulp压缩</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="下载插件&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;下载gulp-cli：
+npm install gulp-cli -g --save
+
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;接着，确认一下版本：
+$ gulp -v
+CLI version: 2.3.0
+Local version: 4.0.2
+
+算了，你什么也没看见
+压缩 html&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;任选其一：
+npm install gulp-htmlmin --save
+npm install gulp-htmlclean --save
+
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;gulp-htmlmin的配置：
+.pipe(htmlmin(&amp;#123;
+    removeComments: tru.."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">gulp压缩</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">点击返回顶部</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E6%8F%92%E4%BB%B6"><span class="toc-text">下载插件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9-html"><span class="toc-text">压缩 html</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9-css"><span class="toc-text">压缩 css</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9-js"><span class="toc-text">压缩 js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9-image"><span class="toc-text">压缩 image</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#gulpflie"><span class="toc-text">gulpflie</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2"><span class="toc-text">部署</span></a></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/gulp"><i class="tag post-item-tag">gulp</i></a></header><h1 class="mt-0 mb-1 is-family-serif" id="postTitle">gulp压缩</h1><time class="has-text-grey" datetime="2021-03-23T04:15:55.000Z">2021-03-23</time><article class="mt-2 post-content"><h2 id="下载插件"><a href="#下载插件" class="headerlink" title="下载插件"></a>下载插件</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;下载<code>gulp-cli</code>：</p>
+<pre><code class="bash">npm install gulp-cli -g --save
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;接着，确认一下版本：</p>
+<pre><code class="bash">$ gulp -v
+CLI version: 2.3.0
+Local version: 4.0.2
+</code></pre>
+<p><del>算了，你什么也没看见</del></p>
+<h3 id="压缩-html"><a href="#压缩-html" class="headerlink" title="压缩 html"></a>压缩 html</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;任选其一：</p>
+<pre><code class="bash">npm install gulp-htmlmin --save
+npm install gulp-htmlclean --save
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<code>gulp-htmlmin</code>的配置：</p>
+<pre><code class="js">.pipe(htmlmin(&#123;
+    removeComments: true, // 清除 HTML 註釋
+    collapseWhitespace: true, // 壓縮 HTML
+    collapseBooleanAttributes: true, // 省略布爾屬性的值 &lt;input checked=&quot;true&quot;/&gt; ==&gt; &lt;input /&gt;
+    removeEmptyAttributes: true, // 刪除所有空格作屬性值 &lt;input id=&quot;&quot; /&gt; ==&gt; &lt;input /&gt;
+    removeScriptTypeAttributes: true, // 刪除 &lt;script&gt; 的 type=&quot;text/javascript&quot;
+    removeStyleLinkTypeAttributes: true, // 刪除 &lt;style&gt; 和 &lt;link&gt; 的 type=&quot;text/css&quot;
+    minifyJS: true, // 壓縮頁面 JS
+    minifyCSS: true, // 壓縮頁面 CSS
+    minifyURLs: true
+&#125;))
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<code>gulp-htmlclean</code>的配置：</p>
+<pre><code class="js">.pipe(htmlclean(&#123;
+    protect: /&lt;\!--%fooTemplate\b.*?%--&gt;/g,
+    edit: function(html) &#123; return html.replace(/\begg(s?)\b/ig, &#39;omelet$1&#39;); &#125;
+&#125;))
+</code></pre>
+<h3 id="压缩-css"><a href="#压缩-css" class="headerlink" title="压缩 css"></a>压缩 css</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;任选其一：</p>
+<pre><code class="bash">npm install gulp-clean-css --save
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<code>gulp-clean-css</code>的配置：</p>
+<pre><code class="javascript">gulp.task(&#39;minify-css&#39;, () =&gt; &#123;
+  return gulp.src(&#39;./public/**/*.css&#39;)
+    .pipe(cleanCSS())
+    .pipe(gulp.dest(&#39;./public&#39;))
+&#125;)
+</code></pre>
+<h3 id="压缩-js"><a href="#压缩-js" class="headerlink" title="压缩 js"></a>压缩 js</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;任选其一：</p>
+<p><strong>重要：<code>gulp-babel</code>、<code>gulp-uglify</code>搭配食用!</strong></p>
+<pre><code class="bash">npm install gulp-tester --save
+npm install gulp-babel --save &amp;&amp; npm install gulp-uglify --save
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<code>gulp-tester</code>的配置：</p>
+<p><del>不好意思，<code>terser</code>配置没写，，哈哈哈哈。</del></p>
+<pre><code class="js">.pipe(terser())
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<code>gulp-babel</code>+<code>gulp-uglify</code>的配置：</p>
+<pre><code class="js">.pipe(babel(&#123;presets: [&#39;@babel/preset-env&#39;]&#125;))
+.pipe(uglify().on(&#39;error&#39;, function (e) &#123;console.log(e)&#125;))
+</code></pre>
+<h3 id="压缩-image"><a href="#压缩-image" class="headerlink" title="压缩 image"></a>压缩 image</h3><pre><code class="bash">npm install gulp-imagemin --save
+</code></pre>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<code>gulp-imagemin</code>的配置：</p>
+<pre><code class="js">.pipe(imagemin(&#123;
+      optimizationLevel: 5, // 類型：Number  預設：3 取值範圍：0-7（優化等級）
+      progressive: true,    7// 類型：Boolean 預設：false 無失真壓縮jpg圖片
+      interlaced: false,    // 類型：Boolean 預設：false 隔行掃描gif進行渲染
+      multipass: false      // 類型：Boolean 預設：false 多次優化svg直到完全優化
+    &#125;))
+</code></pre>
+<h2 id="gulpflie"><a href="#gulpflie" class="headerlink" title="gulpflie"></a>gulpflie</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;在你的博客根目录创建一个<code>gulpfile.js</code>的文件，格式如下：<br>&nbsp;&nbsp;&nbsp;&nbsp;并且根据你自己的插件安装情况，来进行配置：<br><code>Gulpfile.js</code>:</p>
+<pre><code class="js">/* Gulp 压缩 */
+// gulp-cli
+
+const gulp = require(&#39;gulp&#39;)
+
+/* html */
+/* 如果是使用 htmlclean，请注释掉下面一行 */
+const htmlmin = require(&#39;gulp-html-minifier-terser&#39;)
+/* 同理 */
+//const htmlclean = require(&#39;gulp-htmlclean&#39;)
+
+/* css */
+const cleanCSS = require(&#39;gulp-clean-css&#39;)
+
+/* js */
+/* gulp-tester (如果使用 gulp-terser,把下面的//去掉) */
+//const terser = require(&#39;gulp-terser&#39;);
+/* babel (如果使用babel,把下面兩行註釋去掉) */
+/* 重要：gulp-uglify + gulp-babel */
+const uglify = require(&#39;gulp-uglify&#39;)
+const babel = require(&#39;gulp-babel&#39;)
+
+/* image */
+const imagemin = require(&#39;gulp-imagemin&#39;)
+
+/* 压缩 */
+// ---------------
+
+// 壓縮 html
+gulp.task(&#39;minify-html&#39;, () =&gt; &#123;
+  return gulp.src(&#39;./public/**/*.html&#39;, &#39;./public/**/**/*.html&#39;, &#39;./public/*.html&#39;)
+    // 如果使用的是 htmlclean，则保留如下。
+    /*.pipe(htmlclean(&#123;
+        protect: /&lt;\!--%fooTemplate\b.*?%--&gt;/g,
+        edit: function(html) &#123; return html.replace(/\begg(s?)\b/ig, &#39;omelet$1&#39;); &#125;
+      &#125;))*/
+    // 如果使用的是 htmlmin，则保留如下。
+    .pipe(htmlmin(&#123;
+      removeComments: true, // 清除 HTML 註釋
+      collapseWhitespace: true, // 壓縮 HTML
+      collapseBooleanAttributes: true,      // 省略布爾屬性的值 &lt;input checked=&quot;true&quot;/&gt; ==&gt; &lt;input /&gt;
+      removeEmptyAttributes: true,          // 刪除所有空格作屬性值 &lt;input id=&quot;&quot; /&gt; ==&gt; &lt;input /&gt;
+      removeScriptTypeAttributes: true,     // 刪除 &lt;script&gt; 的 type=&quot;text/javascript&quot;
+      removeStyleLinkTypeAttributes: true,  // 刪除 &lt;style&gt; 和 &lt;link&gt; 的 type=&quot;text/css&quot;
+      minifyJS: true,   // 壓縮頁面 JS
+      minifyCSS: true,  // 壓縮頁面 CSS
+      minifyURLs: true
+    &#125;))
+    .pipe(gulp.dest(&#39;./public&#39;))
+&#125;)
+
+/* 压缩 css */
+gulp.task(&#39;minify-css&#39;, () =&gt; &#123;
+  return gulp.src(&#39;./public/**/*.css&#39;, &#39;./public/mysource/**/*.css&#39;)
+    .pipe(cleanCSS())
+    .pipe(gulp.dest(&#39;./public&#39;))
+&#125;)
+
+/* 压缩 js */
+// minify js - gulp-tester (如果使用 gulp-terser,把注释//去掉)
+/* 重要：gulp-uglify + gulp-babel */
+//gulp.task(&#39;compress&#39;, () =&gt;
+//  gulp.src([&#39;./public/**/*.js&#39;, &#39;!./public/**/*.min.js&#39;])
+//    .pipe(terser())
+//    .pipe(gulp.dest(&#39;./public&#39;))
+//)
+// minify js - babel（ 如果不是使用babel,把下面註釋掉）
+gulp.task(&#39;compress&#39;, () =&gt;
+  gulp.src([&#39;./public/**/*.js&#39;, &#39;!./public/**/*.min.js&#39;, &#39;./public/mysource/**/*.js&#39;, &#39;./public/*.js&#39;])
+    .pipe(babel(&#123;
+      presets: [&#39;@babel/preset-env&#39;]
+    &#125;))
+    .pipe(uglify().on(&#39;error&#39;, function (e) &#123;
+      console.log(e)
+    &#125;))
+    .pipe(gulp.dest(&#39;./public&#39;))
+)
+
+/* 压缩 image */
+// 壓縮 public/uploads 目錄內圖片
+gulp.task(&#39;minify-images&#39;, async () =&gt; &#123;
+  gulp.src(&#39;./public/img/**/*.*&#39;, &#39;./public/mysource/image/*.*&#39;)
+    .pipe(imagemin(&#123;
+      optimizationLevel: 5, // 類型：Number  預設：3 取值範圍：0-7（優化等級）
+      progressive: true,    7// 類型：Boolean 預設：false 無失真壓縮jpg圖片
+      interlaced: false,    // 類型：Boolean 預設：false 隔行掃描gif進行渲染
+      multipass: false      // 類型：Boolean 預設：false 多次優化svg直到完全優化
+    &#125;))
+    .pipe(gulp.dest(&#39;./public/img&#39;))
+&#125;)
+
+// 執行 gulp 命令時執行的任務
+gulp.task(&#39;default&#39;, gulp.parallel(
+  &#39;compress&#39;, &#39;minify-css&#39;, &#39;minify-html&#39;, &#39;minify-images&#39;
+))
+</code></pre>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;既然配置都设置好了！接下来就是真材实料的压缩了！<br>&nbsp;&nbsp;&nbsp;&nbsp;在<code>hexo g</code>之后，<code>hexo d</code>之前，加一句命令行<code>gulp</code>即可。</p>
+<pre><code class="bash">hexo cl &amp;&amp; hexo g &amp;&amp; gulp &amp;&amp; hexo d
+</code></pre>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/posts/63361280.html" title="hexoのbilibili追番页面"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">上一页: hexoのbilibili追番页面</span></a><a class="button is-default" href="/posts/c6e4186a.html" title="vscode配置python"><span class="has-text-weight-semibold">下一页: vscode配置python</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>

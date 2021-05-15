@@ -1,0 +1,116 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>使用 Rust WebAssembly 0拷贝进行计算加速</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="demo: https://github.com/aircloud/rust-wasm-demo  
+其他资料：入门 Rust 开发 WebAssembly
+一般来说，使用 WebAssembly 能够在一定程度上提高性能，不过有的时候我们也许会发现，使用 WebAssembly 之后，有的时候我们不仅发现性能没有提升，反而下降了许多甚至数倍，实际上这是因为，使用 WebAssembly 需要非常谨慎，有很多细节都会大幅度影响性能，比如：
+
+我们编译采用的是 debug 还是 release 方式。
+最后编译的结果是否采用了不同级别的优化，如果使用了 opt-level = &amp;#39;s&amp;#39; 那么通常速度也会下降很多。
+是否在 JS 和 rust 之间存在大量的数据拷贝，因为很多代码是工具链生成的，也.."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">使用 Rust WebAssembly 0拷贝进行计算加速</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">点击返回顶部</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96"><span class="toc-text">编译优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%8F%E5%B0%91%E6%8B%B7%E8%B4%9D"><span class="toc-text">减少拷贝</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-wasm-%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98"><span class="toc-text">1. wasm 分配内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-js-%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="toc-text">2. js 写入数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-wasm-%E8%AE%A1%E7%AE%97"><span class="toc-text">3. wasm 计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-js-%E8%AF%BB%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-text">4. js 读取数据</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E6%A1%88"><span class="toc-text">其他方案</span></a></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/rust"><i class="tag post-item-tag">rust</i></a></header><h1 class="mt-0 mb-1 is-family-serif" id="postTitle">使用 Rust WebAssembly 0拷贝进行计算加速</h1><time class="has-text-grey" datetime="2020-06-26T06:47:03.000Z">2020-06-26</time><article class="mt-2 post-content"><p>demo: <a target="_blank" rel="noopener" href="https://github.com/aircloud/rust-wasm-demo">https://github.com/aircloud/rust-wasm-demo</a>  </p>
+<p>其他资料：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/104299612">入门 Rust 开发 WebAssembly</a></p>
+<p>一般来说，使用 WebAssembly 能够在一定程度上提高性能，不过有的时候我们也许会发现，使用 WebAssembly 之后，有的时候我们不仅发现性能没有提升，反而下降了许多甚至数倍，实际上这是因为，使用 WebAssembly 需要非常谨慎，有很多细节都会大幅度影响性能，比如：</p>
+<ul>
+<li>我们编译采用的是 debug 还是 release 方式。</li>
+<li>最后编译的结果是否采用了不同级别的优化，如果使用了 <code>opt-level = &#39;s&#39;</code> 那么通常速度也会下降很多。</li>
+<li>是否在 JS 和 rust 之间存在大量的数据拷贝，因为很多代码是工具链生成的，也许有的时候我们会忽视这一点。</li>
+</ul>
+<p>本文针对以上等一些问题特别是第三点，给出一个 wasm 优化的参考方案，并给出示例代码。</p>
+<h3 id="编译优化"><a href="#编译优化" class="headerlink" title="编译优化"></a>编译优化</h3><p>我们在优化数据拷贝之前，对于编译我们可以做一些前置的简单的工作。</p>
+<ul>
+<li>检查 Cargo.toml 脚本中 <code>[profile.release]</code> 中的 <code>opt-level</code> 选项，确认我们所使用的值：</li>
+</ul>
+<pre><code>This flag controls the optimization level.
+
+0: no optimizations, also turns on cfg(debug_assertions) (the default).
+1: basic optimizations.
+2: some optimizations.
+3: all optimizations.
+s: optimize for binary size.
+z: optimize for binary size, but also turn off loop vectorization.
+Note: The -O flag is an alias for -C opt-level=2.
+
+The default is 0.
+</code></pre>
+<p>如果我们使用了 ‘s’ 或者 ‘z’，那么通常会牺牲一部分性能（对于 demo 而言，使用 ‘z’， wasm 的性能也只有 js 的 20%），因为其主要是对体积进行一定的优化，所以如果优化前的体积我们可以接受的话，通常不需要这样的优化。</p>
+<p>在以上的前提下，我们使用 <code>--release</code> 的方式编译，通常就可以了。</p>
+<h3 id="减少拷贝"><a href="#减少拷贝" class="headerlink" title="减少拷贝"></a>减少拷贝</h3><p>在这之前，我们需要有一个认知：</p>
+<p><strong>通过 rust 工具链编译的 wasm 代码，所有参数传入都是需要拷贝一次的，包括我们传入 ArrayBuffer 等 Buffer 类型的参数。</strong>这是由于 wasm 只能访问自己的线性内存，而这个拷贝，通常是我们在处理大规模计算的一个坎，有的时候虽然 wasm 计算快一点，但是拷贝的消耗还是比较大的，加之 js 有若干 v8 优化的加持，可能和 wasm 也相差不多。</p>
+<p>所以我们要把计算移植到 wasm 中的话，首先要解决的就是大规模数据拷贝的问题。</p>
+<p>这里的一般思路为：</p>
+<ol>
+<li>wasm 分配内存：调用 wasm 的方法，在 wasm 内存中分配空间，返回指针位置</li>
+<li>js 写入数据：js 端在 wasm 的 memory arraybuffer 上，按指针位置和数据量建立 view，把数据写入</li>
+<li>wasm 计算：调用 wasm 方法完成计算， 返回计算好的批量结果的指针位置和大小</li>
+<li>js 读取数据：js 端在 wasm 的 memory arraybuffer上，按指针位置和数据量建立 view，把数据读出</li>
+</ol>
+<p>接下来，我们通过一个 demo 来完成以上几点，demo 的主要功能为：</p>
+<ul>
+<li>初始化一个 ImageData，内容随机。</li>
+<li>分别使用 js 和 WebAssembly 进行高斯模糊计算，并计算二者的时间，进行对比。</li>
+</ul>
+<p>这里的 demo 只是辅助进行验证改方案的可行性并且给出一个示例，并不作为一个标准的 benchmark 去对比 js 和 WebAssembly 的性能，同时，也并没有 UI 展示，计算结果输出在控制台中。</p>
+<p>最终笔者运行的结果为，js 比 WebAssembly 慢 30% 左右。</p>
+<h4 id="1-wasm-分配内存"><a href="#1-wasm-分配内存" class="headerlink" title="1. wasm 分配内存"></a>1. wasm 分配内存</h4><p>这部分的通用做法，即我们在 wasm 的 rust 中分配一个数组（Vec），然后把其指针传递给 js：</p>
+<pre><code>// rust：
+#[wasm_bindgen]
+pub fn new_buffer(key: String, len: usize) -&gt; *const u8 &#123;
+  // GlobalBufferStorage 是一个 lazy_static
+  let mut global_buffer_storage = GlobalBufferStorage.lock().unwrap();
+  let mut buffer = vec![255; len];
+  let ptr = buffer.as_ptr();
+  global_buffer_storage.buffer_map.insert(key, buffer);
+  ptr
+&#125;
+</code></pre>
+<p>为了后续方便寻找到这段数据，我们可以使用一个 key 将这个 Vec 联系起来，并且在 Rust 中放入全局（可以使用 lazy_static!，因为这种类型的数据没有办法直接定义在全局），之后通过 key 来查找数据。</p>
+<p>在 js 中，我们就可以建立各种 TypedArray 对其进行操作：</p>
+<pre><code>const ptr = this.wasm!.new_buffer(key, len);
+const u8Arr = new Uint8ClampedArray(this.wasm!.get_wasm_buffer(), ptr, len);
+</code></pre>
+<p><strong>这个时候，我们在 js 或 rust 任何一侧改了这个数据之后，都可以在另外一侧访问到。</strong></p>
+<p>实际上，在 js 侧的比如 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/ImageData/ImageData">ImageData</a> 等一些对象中，也支持我们传递一个 TypedArray 进行初始化，这让我们在比如 canvas 等应用场景下，使用 wasm 分配的内存更为方便。</p>
+<pre><code>const imageData = new ImageData(u8Arr, width, height);
+</code></pre>
+<h4 id="2-js-写入数据"><a href="#2-js-写入数据" class="headerlink" title="2. js 写入数据"></a>2. js 写入数据</h4><p>如果我们需要在 js 侧写入数据，实际上这个时候我们得到的 TypedArray 已经和直接使用 js new 的 TypedArray 在使用上没有差别，可以正常按照数组的方式进行数据写入。</p>
+<p>不过，这里需要注意的是，js 写入通过 wasm 分配内存建立的 TypedArray，有些场景下在一定程度上速度要慢于直接使用 js new 的 TypedArray（不过在笔者的测试数据中，wasm 分配的方式反而是更快的），所以如果我们是一个高频的数据写入的场景，比如帧数据等，这个时候最好进行一次对比测试。</p>
+<h4 id="3-wasm-计算"><a href="#3-wasm-计算" class="headerlink" title="3. wasm 计算"></a>3. wasm 计算</h4><p>当我们真正需要进行计算的时候，我们可以调用 wasm 的计算函数，并且传入上文中定义的 key，这样 wasm 的 rust 函数可以直接找到这段数据，这里我们的 demo 为一段计算卷积的函数：</p>
+<pre><code>#[wasm_bindgen]
+pub fn convolution(key: String, width: usize, height: usize, kernel: Vec&lt;i32&gt;) &#123;
+  let mut global_buffer_storage = GlobalBufferStorage.lock().unwrap();
+  let kernel_length = kernel.iter().sum::&lt;i32&gt;() as i32;
+  if let Some(buffer) = global_buffer_storage.buffer_map.get_mut(&amp;key) &#123;
+    for i in 1..width-1 &#123;
+      for j in 1..height-1 &#123;
+        let mut newR: i32 = 0;
+        let mut newG: i32 = 0;
+        let mut newB: i32 = 0;
+        for x in 0..3 &#123; // 取前后左右共9个格子
+          for y in 0..3 &#123;
+            newR += buffer[width * (j + y - 1) * 4 + (i + x - 1) * 4 + 0] as i32 * kernel[y * 3 + x] / kernel_length;
+            newG += buffer[width * (j + y - 1) * 4 + (i + x - 1) * 4 + 1] as i32 * kernel[y * 3 + x] / kernel_length;
+            newB += buffer[width * (j + y - 1) * 4 + (i + x - 1) * 4 + 2] as i32 * kernel[y * 3 + x] / kernel_length;
+          &#125;
+        &#125;
+        buffer[width * j * 4 + i * 4 + 0] = newR as u8;
+        buffer[width * j * 4 + i * 4 + 1] = newG as u8;
+        buffer[width * j * 4 + i * 4 + 2] = newB as u8;
+      &#125;
+    &#125;
+  &#125; else &#123;
+    return ();
+  &#125;
+&#125;
+</code></pre>
+<p>因为这段函数对应操作的内存数据实际上已经在 wasm 和 js 之间共享了，所以也是不需要返回值的，等计算完成后 js 直接去读之前建立的 TypedArray，甚至直接使用通过 TypedArray 创建的 ImageData，进行绘制上屏等后续操作。</p>
+<h4 id="4-js-读取数据"><a href="#4-js-读取数据" class="headerlink" title="4. js 读取数据"></a>4. js 读取数据</h4><p>在 demo 中，我们可以直接通过 <code>CanvasRenderingContext2D.putImageData()</code> 传入之前获取的 imageData，绘制上屏。</p>
+<h3 id="其他方案"><a href="#其他方案" class="headerlink" title="其他方案"></a>其他方案</h3><p>实际上，我们如果目的是加速 js 计算，不仅仅有 WebAssembly 这一个方案可以选择，如果我们的环境中拥有可以访问 Node 的能力或者可以访问原生模块的能力（比如，我们的应用运行在 electron 环境，或者是一些移动客户端），也可以采用比如 addon 的方式来运行我们的计算部分，相比于 wasm，这部分的优缺点在于：</p>
+<p>优点：</p>
+<ul>
+<li>通常可以更好的控制优化，甚至做到汇编级别的优化定制，性能提升空间更高（同样也可能会面临数据拷贝的问题，也需要一定方式减少拷贝）。</li>
+<li>在重 addon 的环境下（例如，其他大量功能也依赖 addon），可以更好的处理函数调用关系、依赖库使用等，一定程度上减少体积和增加开发的便捷性，而 wasm 会被编译成一个独立的二进制文件，处于沙盒环境中，无法直接调用其他的动态库。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>无法做到像 wasm 一样跨平台，并且可以同时运行在网页、桌面环境、移动端等任何 Webview 存在的环境中。</li>
+</ul>
+<p>不过总之，如果使用得当，二者的性能都是可以优于原生的 js，都可以作为优化方案考虑。</p>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/posts/507c070f.html" title="Butterfly添加全局吸底Aplayer教程"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">上一页: Butterfly添加全局吸底Aplayer教程</span></a><a class="button is-default" href="/posts/4ad4e28.html" title="使用 OpenCV 实现简单的人脸识别程序"><span class="has-text-weight-semibold">下一页: 使用 OpenCV 实现简单的人脸识别程序</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>

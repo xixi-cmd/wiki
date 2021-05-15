@@ -1,0 +1,740 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>Gradle</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="软件行业的蓬勃发展，新旧交替，版本构建工具从 ant -&amp;gt; maven -&amp;gt; gradle 进行演变，个人不喜欢 maven 的 xml 的配置文件，基于  Groovy 语言作为构建脚本语言，相对于 JAVA 开发人员来说比较容易上手，动态语言也比 xml 配置文件更灵活，构建速度也更加的快速，所以入了 gradle 的坑。当然，目前，很多公司还是使用 maven 作为构建工具，所以建议maven 还是要懂点的。
+本文仅供自己学习 gradle 的记录笔记，如果你想深入的学习，请戳 官方文档
+个人觉得，官方文档是最好的学习文档，我简单过了一遍，感觉官方文档的例子都很精炼，总结得很到位，底下很多代码实例也是来自官方文档。
+
+
+基本概念每一次  Gradle  构建都是由一个或者多个 projec.."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">Gradle</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">点击返回顶部</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE-Projects"><span class="toc-text">项目 Projects</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1-Tasks"><span class="toc-text">任务 Tasks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-Build-Lifecycle"><span class="toc-text">构建生命周期 Build Lifecycle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-Settings-file"><span class="toc-text">配置文件 Settings file</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#settings-gradle"><span class="toc-text">settings.gradle</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#build-gradle"><span class="toc-text">build.gradle</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gradle-properties"><span class="toc-text">gradle.properties</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gradle-utils-gradle"><span class="toc-text">gradle&#x2F;utils.gradle</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Groovy-%E5%9F%BA%E7%A1%80"><span class="toc-text">Groovy 基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-text">基本语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E8%84%9A%E6%9C%AC%E8%A7%A3%E6%9E%90"><span class="toc-text">构建脚本解析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Todo"><span class="toc-text">Todo</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8F%92%E4%BB%B6"><span class="toc-text">使用插件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#The-Java-Plugin"><span class="toc-text">The Java Plugin</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Project-Layout"><span class="toc-text">Project Layout</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Dependency-management"><span class="toc-text">Dependency management</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#jar"><span class="toc-text">jar</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#The-War-Plugin"><span class="toc-text">The War Plugin</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%BB%E5%8A%A1"><span class="toc-text">自定义任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%A1%E7%90%86%E4%BE%9D%E8%B5%96"><span class="toc-text">管理依赖</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E7%B1%BB%E5%9E%8B"><span class="toc-text">依赖类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%93%E5%BA%93%E7%B1%BB%E5%9E%8B"><span class="toc-text">仓库类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E5%86%B2%E7%AA%81"><span class="toc-text">版本冲突</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA"><span class="toc-text">多项目构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95"><span class="toc-text">测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E5%B8%83"><span class="toc-text">发布</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Maven-Publish-Pluging"><span class="toc-text">Maven Publish Pluging</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="toc-text">相关链接</span></a></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/JAVA"><i class="tag post-item-tag">JAVA</i></a><a href="/tags/gradle"><i class="tag post-item-tag">gradle</i></a></header><h1 class="mt-0 mb-1 is-family-serif" id="postTitle">Gradle</h1><time class="has-text-grey" datetime="2021-05-14T12:31:57.670Z">2021-05-14</time><article class="mt-2 post-content"><p>软件行业的蓬勃发展，新旧交替，版本构建工具从 <strong>ant -&gt; maven -&gt; gradle</strong> 进行演变，个人不喜欢 maven 的 xml 的配置文件，基于  <strong>Groovy</strong> 语言作为构建脚本语言，相对于 JAVA 开发人员来说比较容易上手，动态语言也比 xml 配置文件更灵活，构建速度也更加的快速，所以入了 gradle 的坑。当然，目前，很多公司还是使用 maven 作为构建工具，所以建议maven 还是要懂点的。</p>
+<p>本文仅供自己学习 gradle 的记录笔记，如果你想深入的学习，请戳 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/userguide.html"><strong>官方文档</strong></a></p>
+<p>个人觉得，官方文档是最好的学习文档，我简单过了一遍，感觉官方文档的例子都很精炼，总结得很到位，底下很多代码实例也是来自官方文档。</p>
+<span id="more"></span>
+
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>每一次  Gradle  构建都是由一个或者多个 <strong>projects</strong> 组成，</p>
+<p>比如一个  <strong>root projects</strong>  依赖多个 <strong>sub projects</strong> <strong>(module)</strong> 项目，每个 projects 又由编译，打包，生成javadoc，发布等多个 <strong>tasks</strong> 组成。<strong>tasks</strong> 之间也可以相互依赖，形成一个依赖关系图以确保他们的执行顺序。</p>
+<h3 id="项目-Projects"><a href="#项目-Projects" class="headerlink" title="项目 Projects"></a>项目 Projects</h3><p>一个项目代表一个正在构建的组件，比如一个jar文件，当构建启动的时候，<strong>Gradle</strong> 会基于 <strong>build.gradle</strong> 实例化一个 <strong>org.gradle.api.Project</strong> 类，并且能够通过 project 变量使其隐式可用。</p>
+<p>属性: <strong>group name version</strong></p>
+<p>方法: <strong>apply denpendencies repositories task</strong></p>
+<p>其他配置方式: <strong>ext gradle.properties</strong></p>
+<h3 id="任务-Tasks"><a href="#任务-Tasks" class="headerlink" title="任务 Tasks"></a>任务 Tasks</h3><p>任务对应 <strong>org.gradle.api.Task</strong> ，主要包括任务动作和任务依赖。任务工作定义了一个最小的工作单元，可以定义依赖其他任务，动作序列和动作执行条件等。</p>
+<p>方法: <strong>dependsOn doFirst do Last(&lt;&lt;)</strong>  </p>
+<h3 id="构建生命周期-Build-Lifecycle"><a href="#构建生命周期-Build-Lifecycle" class="headerlink" title="构建生命周期 Build Lifecycle"></a>构建生命周期 Build Lifecycle</h3><p>A Gradle build has three distinct phases.</p>
+<ul>
+<li><p>Initialization</p>
+<p>Gradle supports single and multi-project builds. During the initialization phase, Gradle determines which projects are going to take part in the build, and creates a <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html">Project</a> instance for each of these projects.</p>
+</li>
+<li><p>Configuration</p>
+<p>During this phase the project objects are configured. The build scripts of <em>all</em> projects which are part of the build are executed.</p>
+</li>
+<li><p>Execution</p>
+<p>Gradle determines the subset of the tasks, created and configured during the configuration phase, to be executed. The subset is determined by the task name arguments passed to the <code>gradle</code> command and the current directory. Gradle then executes each of the selected tasks.</p>
+</li>
+</ul>
+<h3 id="配置文件-Settings-file"><a href="#配置文件-Settings-file" class="headerlink" title="配置文件 Settings file"></a>配置文件 Settings file</h3><p>简要概述，就是如果你是多项目，那么你要在 root project 里创建 <strong>settings.gradle</strong> 里去定义跟 sub project的关系，这个文件会在所有 project build.gradle 执行前执行。</p>
+<p>每个 project 都有一个构建脚本 <strong>build.gradle</strong> 来完成每个 project 的构建。</p>
+<p>在构建的时候，你如果需要对 gradle 运行一些通用的构建配置，你可以定义在 <strong>gradle.properties</strong> 里，比如全局的 group 跟 name 等。</p>
+<p>另外，gradle 是插件配置，你可以通过 <strong>apply</strong> 引入各种现成的或者自定义的插件构建脚本。</p>
+<p>关于 gradle 项目的几种构建脚本或者配置文件描述如下</p>
+<h4 id="settings-gradle"><a href="#settings-gradle" class="headerlink" title="settings.gradle"></a>settings.gradle</h4><p>This is executed during the <strong>initialization</strong> phase.</p>
+<p>The main role of settings.gradle is to define all included submodules and to mark the directory root of a tree of modules, so you can only have one <code>settings.gradle</code> file in a multi-module project.</p>
+<pre><code class="java">rootProject.name = &#39;project-x&#39;
+
+include &#39;sub-a&#39;, &#39;sub-b&#39;
+</code></pre>
+<p>The settings file is also written in groovy, and submodule lookup can be adapted alot.</p>
+<h4 id="build-gradle"><a href="#build-gradle" class="headerlink" title="build.gradle"></a>build.gradle</h4><p>This is executed during the <strong>configuration</strong> phase.</p>
+<p>There is one such file per module, it contains the build logic for this module.</p>
+<p>In the <code>build.gradle</code> file of the <strong>main module</strong>, you can use <code>allprojects &#123;&#125;</code> or <code>subprojects &#123;&#125;</code>to define settings for all other modules.</p>
+<p>In the <code>build.gradle</code> file of the submodules, you can use <code>compile project(&#39;:sub-a&#39;)</code> to make one submodule depend on the other.</p>
+<h4 id="gradle-properties"><a href="#gradle-properties" class="headerlink" title="gradle.properties"></a>gradle.properties</h4><p>This is optional, it’s main purpose is to provide startup options to use for running gradle itself, e.g.</p>
+<pre><code class="java">org.gradle.jvmargs=-Dfile.encoding=UTF-8 ...
+org.gradle.configureondemand=true
+</code></pre>
+<h4 id="gradle-utils-gradle"><a href="#gradle-utils-gradle" class="headerlink" title="gradle/utils.gradle"></a>gradle/utils.gradle</h4><p>(Any name of folder or file is possible.) You can define additional custom gradle files to reuse definitions, and include them in other gradle files via</p>
+<pre><code class="java">apply from: &quot;$rootDir/gradle/utils.gradle&quot;
+</code></pre>
+<h2 id="Groovy-基础"><a href="#Groovy-基础" class="headerlink" title="Groovy 基础"></a>Groovy 基础</h2><p>Groovy是一门jvm语言，它最终是要编译成class文件然后在jvm上执行，所以Java语言的特性Groovy都支持，我们完全可以混写Java和Groovy。</p>
+<p>既然如此，那Groovy的优势是什么呢？简单来说，Groovy提供了更加灵活简单的语法，大量的语法糖以及闭包特性可以让你用更少的代码来实现和Java同样的功能。比如解析xml文件，Groovy就非常方便，只需要几行代码就能搞定，而如果用Java则需要几十行代码。</p>
+<h3 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h3><p>深入学习或者有问题请戳 <a target="_blank" rel="noopener" href="http://docs.groovy-lang.org/latest/html/groovy-jdk/index-all.html"><strong>Groovy Api文档</strong></a></p>
+<pre><code class="groovy">// 完全兼容 java 的语法
+
+// 分号可选
+
+// 类，方法默认都是 public
+
+// 编译器给属性自动添加 getter/setter 方法
+
+// 属性可以直接通过 . 号获取 
+
+// == 调用 equals 方法，判断对象是否同一个使用.is()
+Object a = new Object()
+Object b = a.clone()
+
+assert a == b
+assert !a.is(b)
+
+// 弱类型语言，可以直接用 def 定义
+def version = 1
+
+// assert 语句
+version = null
+assert version == 2
+
+// 括号可选
+println version
+
+// 方法返回值可省略
+def hello() &#123;
+    1;
+&#125;
+
+// 字符串
+
+// .1 单引号仅仅表示字符
+def s1 = &#39;hello world&#39;
+
+// .2 双引号可以引用变量
+def world = &#39;world&#39;
+def s2 = &quot;hello $&#123;world&#125;&quot;
+
+// .3 三个引号可以换行
+def s3 = &#39;&#39;&#39; hello 
+world
+&#39;&#39;&#39;
+
+// 循环
+for (i in 1..5)&#123;
+    println(&quot;hello world&quot;)
+&#125;
+4.times &#123;
+    println it
+&#125;
+
+// 集合api
+
+// .1 list -&gt; ArrayList
+def buildTools = [&#39;ant&#39;, &#39;maven&#39;]
+buildTools &lt;&lt; &#39;gradle&#39;
+assert buildTools.getClass() == ArrayList
+assert buildTools.size
+
+// .2 map -&gt; LinkedHashMap
+def map = &#39;a&#39;:&#39;b&#39;
+def buildYears = [&#39;ant&#39;: 2000, &#39;maven&#39;: 2004]
+buildYears.gradle = 2009
+println buildYears.ant
+println buildYears[&#39;ant&#39;]
+println buildYears.getClass()
+
+// 闭包 -&gt; 类似于c语言的函数指针，可以作为方法的参数和返回值，也可以作为一个变量而存在。
+def c1 = &#123;
+    v -&gt;
+        println v
+&#125;
+def c2 = &#123;
+    println &#39;world&#39;
+&#125;
+def method1(Closure closure) &#123;方法: apply denpendencies repositories task
+
+
+    closure(&#39;hello&#39;)
+&#125;
+def method2(Closure closure) &#123;
+    closure()
+&#125;
+
+c1.call(&#39;hello&#39;)
+c1(&#39;hello&#39;)
+c2.call()
+method1(c1)
+method2(c2)
+
+// io
+def file = new File(&quot;a.txt&quot;)
+
+println &quot;read file using two parameters&quot;
+file.eachLine &#123; line, lineNo -&gt;
+
+    println &quot;$&#123;lineNo&#125; $&#123;line&#125;&quot;
+
+&#125;
+
+println &quot;read file using one parameters&quot;
+file.eachLine &#123; line -&gt;
+
+    println &quot;$&#123;line&#125;&quot;
+
+&#125;
+
+file.eachLine(&quot;utf-8&quot;) &#123;
+    println it
+&#125;
+
+// wich 操作符
+Book bk = new Book()
+bk.id = 1
+bk.name = &quot;android art&quot;
+bk.press = &quot;china press&quot;
+
+Book bk = new Book() 
+bk.with &#123;
+    id = 1
+    name = &quot;android art&quot;
+    press = &quot;china press&quot;
+&#125;
+
+// 判断是否为真
+if (name) &#123;&#125;
+
+// 三元表达式
+def result = name ?: &quot;Unknown&quot;
+
+// 非空判断
+println order?.customer?.address
+
+// switch
+def x = 1.23
+def result = &quot;&quot;
+switch (x) &#123;
+    case &quot;foo&quot;: result = &quot;found foo&quot;
+
+    // lets fall through
+
+    case &quot;bar&quot;: result += &quot;bar&quot;
+    case [4, 5, 6, &#39;inList&#39;]: result = &quot;list&quot;
+    break
+
+    case 12..30: result = &quot;range&quot;
+    break
+
+    case Integer: result = &quot;integer&quot;
+    break
+
+    case Number: result = &quot;number&quot;
+    break
+
+    case &#123; it &gt; 3 &#125;: result = &quot;number &gt; 3&quot;
+    break
+
+    default: result = &quot;default&quot;
+&#125;
+assert result == &quot;number&quot;
+</code></pre>
+<h3 id="构建脚本解析"><a href="#构建脚本解析" class="headerlink" title="构建脚本解析"></a>构建脚本解析</h3><p>详细介绍或者想深入了解请戳 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#apply(java.util.Map)"><strong>官方api</strong></a></p>
+<pre><code class="groovy">
+//  PluginAware.apply(java.util.Map) 
+apply plugin:&#39;java&#39;
+
+version = &#39;0.1&#39;
+
+// void    repositories​(Closure configureClosure)    
+// Configures the repositories for this project.
+repositories &#123;
+    mavenCentral()
+&#125;
+
+// void dependencies​(Closure configureClosure)
+// Configures the dependencies for this project.
+dependencies &#123;
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    compile group: &#39;com.google.guava&#39;, name: &#39;guava&#39;, version: &#39;27.1-jre&#39;
+&#125;
+</code></pre>
+<h2 id="Todo"><a href="#Todo" class="headerlink" title="Todo"></a>Todo</h2><h3 id="使用插件"><a href="#使用插件" class="headerlink" title="使用插件"></a>使用插件</h3><p>Gradle的设计理念是，所有有用的特性都由<a target="_blank" rel="noopener" href="http://www.gradle.org/docs/current/userguide/plugins.html">Gradle插件</a>提供，一个Gradle插件能够：</p>
+<ul>
+<li><p>在项目中添加新任务</p>
+</li>
+<li><p>为新加入的任务提供默认配置，这个默认配置会在项目中注入新的约定（如源文件位置）。</p>
+</li>
+<li><p>加入新的属性，可以覆盖插件的默认配置属性。</p>
+</li>
+<li><p>为项目加入新的依赖。</p>
+</li>
+</ul>
+<p>Gradle 用户手册提供了 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/plugin_reference.html"><strong>一系列标准的gradle插件</strong></a>  </p>
+<h4 id="The-Java-Plugin"><a href="#The-Java-Plugin" class="headerlink" title="The Java Plugin"></a>The Java Plugin</h4><p>比如 <strong>The Java Plugin</strong>， 提供了 java 相关的目录结构，属性配置，构建任务等等</p>
+<p>如果我们使用标准的gradle插件，</p>
+<p>注意这个不能在配置在 <strong>multi-project configurations(subprojects<code>, </code>allprojects)</strong></p>
+<pre><code class="groovy">plugins: &#123;
+    id: &#39;java&#39;
+&#125;
+</code></pre>
+<p>当然我们也可以使用 <strong>apply</strong> 方法，就比较灵活了</p>
+<pre><code class="groovy">apply plugin: &#39;java&#39;
+</code></pre>
+<p>我们还可以定义 jvm 的编译级别</p>
+<pre><code class="groovy">sourceCompatibility: 1.8
+targetCompatibility: 1.8
+</code></pre>
+<h5 id="Project-Layout"><a href="#Project-Layout" class="headerlink" title="Project Layout"></a>Project Layout</h5><p>当我们使用 java 这个插件的时候，它默认的项目结构是</p>
+<ul>
+<li><p><code>src/main/java</code></p>
+<p>Production Java source.</p>
+</li>
+<li><p><code>src/main/resources</code></p>
+<p>Production resources, such as XML and properties files.</p>
+</li>
+<li><p><code>src/test/java</code></p>
+<p>Test Java source.</p>
+</li>
+<li><p><code>src/test/resources</code></p>
+<p>Test resources.</p>
+</li>
+<li><p><code>src/*sourceSet*/java</code></p>
+<p>Java source for the source set named <em>sourceSet</em>.</p>
+</li>
+<li><p><code>src/*sourceSet*/resources</code></p>
+<p>Resources for the source set named <em>sourceSet</em>.</p>
+</li>
+</ul>
+<p>当然我们也可以更改它</p>
+<pre><code class="groovy">sourceSets &#123;
+    main &#123;
+        java &#123;
+            srcDirs = [&#39;src/java&#39;]
+        &#125;
+        resources &#123;
+            srcDirs = [&#39;src/resources&#39;]
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h5 id="Dependency-management"><a href="#Dependency-management" class="headerlink" title="Dependency management"></a>Dependency management</h5><ul>
+<li><p><code>compile</code>(Deprecated)</p>
+<p>Compile time dependencies. Superseded by <code>implementation</code>.</p>
+</li>
+<li><p><code>implementation</code> extends <code>compile</code></p>
+<p>Implementation only dependencies.</p>
+</li>
+<li><p><code>compileOnly</code></p>
+<p>Compile time only dependencies, not used at runtime.</p>
+</li>
+<li><p><code>compileClasspath</code> extends <code>compile, compileOnly, implementation</code></p>
+<p>Compile classpath, used when compiling source. Used by task <code>compileJava</code>.</p>
+</li>
+<li><p><code>annotationProcessor</code></p>
+<p>Annotation processors used during compilation.</p>
+</li>
+<li><p><code>runtime</code>(Deprecated) extends <code>compile</code></p>
+<p>Runtime dependencies. Superseded by <code>runtimeOnly</code>.</p>
+</li>
+<li><p><code>runtimeOnly</code></p>
+<p>Runtime only dependencies.</p>
+</li>
+<li><p><code>runtimeClasspath</code> extends <code>runtimeOnly, runtime, implementation</code></p>
+<p>Runtime classpath contains elements of the implementation, as well as runtime only elements.</p>
+</li>
+<li><p><code>testCompile</code>(Deprecated) extends <code>compile</code></p>
+<p>Additional dependencies for compiling tests. Superseded by <code>testImplementation</code>.</p>
+</li>
+<li><p><code>testImplementation</code> extends <code>testCompile, implementation</code></p>
+<p>Implementation only dependencies for tests.</p>
+</li>
+<li><p><code>testCompileOnly</code></p>
+<p>Additional dependencies only for compiling tests, not used at runtime.</p>
+</li>
+<li><p><code>testCompileClasspath</code> extends <code>testCompile, testCompileOnly, testImplementation</code></p>
+<p>Test compile classpath, used when compiling test sources. Used by task <code>compileTestJava</code>.</p>
+</li>
+<li><p><code>testRuntime</code>(Deprecated) extends <code>runtime, testCompile</code></p>
+<p>Additional dependencies for running tests only. Used by task <code>test</code>. Superseded by <code>testRuntimeOnly</code>.</p>
+</li>
+<li><p><code>testRuntimeOnly</code> extends <code>runtimeOnly</code></p>
+<p>Runtime only dependencies for running tests. Used by task <code>test</code>.</p>
+</li>
+<li><p><code>testRuntimeClasspath</code> extends <code>testRuntimeOnly, testRuntime, testImplementation</code></p>
+<p>Runtime classpath for running tests.</p>
+</li>
+<li><p><code>archives</code></p>
+<p>Artifacts (e.g. jars) produced by this project. Used by tasks <code>uploadArchives</code>.</p>
+</li>
+<li><p><code>default</code> extends <code>runtime</code></p>
+<p>The default configuration used by a project dependency on this project. Contains the artifacts and dependencies required by this project at runtime.</p>
+</li>
+</ul>
+<h5 id="jar"><a href="#jar" class="headerlink" title="jar"></a>jar</h5><p>插件也会提供很多构建任务，比如 <strong>compileJava</strong> ， <strong>processResources</strong>，<strong>classes</strong>，<strong>jar</strong>，<strong>clean</strong>，<strong>test</strong> 等等，这里只简要地提一下 <strong>jar</strong> 构建的 <strong>Manifest</strong></p>
+<p>Each jar or war object has a <code>manifest</code> property with a separate instance of <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/javadoc/org/gradle/api/java/archives/Manifest.html">Manifest</a>. When the archive is generated, a corresponding <code>MANIFEST.MF</code> file is written into the archive.</p>
+<pre><code class="groovy">jar &#123;
+    from &#123; configurations.compile.collect &#123; it.isDirectory() ? it : zipTree(it) &#125; &#125;
+    manifest &#123;
+        attributes &#39;Main-Class&#39;: &#39;cn.jianchengwang.todo.gradle.HelloWorld&#39;
+    &#125;
+&#125;
+</code></pre>
+<h4 id="The-War-Plugin"><a href="#The-War-Plugin" class="headerlink" title="The War Plugin"></a>The War Plugin</h4><p>The War plugin extends the Java plugin to add support for assembling web application WAR files. It disables the default JAR archive generation of the Java plugin and adds a default WAR archive task.</p>
+<p>这里只显示一些简单的配置脚本</p>
+<pre><code class="groovy">apply plugin: &#39;war&#39;
+
+configurations &#123;
+   moreLibs
+&#125;
+
+repositories &#123;
+   flatDir &#123; dirs &quot;lib&quot; &#125;
+   jcenter()
+&#125;
+
+dependencies &#123;
+    implementation module(&quot;:compile:1.0&quot;) &#123;
+        dependency &quot;:compile-transitive-1.0@jar&quot;
+        dependency &quot;:providedCompile-transitive:1.0@jar&quot;
+    &#125;
+    providedCompile &quot;javax.servlet:servlet-api:2.5&quot;
+    providedCompile module(&quot;:providedCompile:1.0&quot;) &#123;
+        dependency &quot;:providedCompile-transitive:1.0@jar&quot;
+    &#125;
+    runtimeOnly &quot;:runtime:1.0&quot;
+    providedRuntime &quot;:providedRuntime:1.0@jar&quot;
+    testImplementation &quot;junit:junit:4.12&quot;
+    moreLibs &quot;:otherLib:1.0&quot;
+&#125;
+
+war &#123;
+    from &#39;src/rootContent&#39; // adds a file-set to the root of the archive
+    webInf &#123; from &#39;src/additionalWebInf&#39; &#125; // adds a file-set to the WEB-INF dir.
+    classpath fileTree(&#39;additionalLibs&#39;) // adds a file-set to the WEB-INF/lib dir.
+    classpath configurations.moreLibs // adds a configuration to the WEB-INF/lib dir.
+    webXml = file(&#39;src/someWeb.xml&#39;) // copies a file to WEB-INF/web.xml
+&#125;
+</code></pre>
+<p>其他还有很多官方标准插件这里就不都叙述了，还有怎么编写 gradle 插件，官方文档里有详细的介绍，有兴趣可以去了解下。</p>
+<h3 id="自定义任务"><a href="#自定义任务" class="headerlink" title="自定义任务"></a>自定义任务</h3><pre><code class="groovy">
+task hello &#123;
+    doLast -&gt; &#123;
+        println &#39;hello world&#39;
+    &#125;
+&#125;
+
+task count &#123;
+    &lt;&lt; &#123;
+        4.times &#123; print &quot;$it &quot; &#125;
+    &#125;
+&#125;
+
+// Task dependencies
+task intro &#123;
+    dependsOn hello
+    doLast &#123;
+        println &quot;I&#39;m Gradle&quot;
+    &#125;
+&#125;
+
+// Dynamic tasks
+4.times &#123; counter -&gt;
+    task &quot;task$counter&quot; &#123;
+        doLast &#123;
+            println &quot;I&#39;m task number $counter&quot;
+        &#125;
+    &#125;
+&#125;
+
+// Manipulating existing tasks
+hello.doFirst &#123;
+    println &#39;Hello Venus&#39;
+&#125;
+hello.configure &#123;
+    doLast &#123;
+        println &#39;Hello Mars&#39;
+    &#125;
+&#125;
+hello.configure &#123;
+    doLast &#123;
+        println &#39;Hello Jupiter&#39;
+    &#125;
+&#125;
+
+// Extra task properties
+task myTask &#123;
+    ext.myProperty = &quot;myValue&quot;
+&#125;
+
+task printTaskProperties &#123;
+    doLast &#123;
+        println myTask.myProperty
+    &#125;
+&#125;
+
+// Default tasks
+// Gradle allows you to define one or more default tasks that are executed if no other tasks are specified.
+defaultTasks &#39;clean&#39;, &#39;run&#39;
+
+task clean &#123;
+    doLast &#123;
+        println &#39;Default Cleaning!&#39;
+    &#125;
+&#125;
+
+task run &#123;
+    doLast &#123;
+        println &#39;Default Running!&#39;
+    &#125;
+&#125;
+
+task other &#123;
+    doLast &#123;
+        println &quot;I&#39;m not a default task!&quot;
+    &#125;
+&#125;
+
+// working with files
+// .1 Copy
+task copyReport(type: Copy) &#123;
+    from file(&quot;$buildDir/reports/my-report.pdf&quot;)
+    into file(&quot;$buildDir/toArchive&quot;)
+&#125;
+
+task copyReportsForArchiving(type: Copy) &#123;
+    from &quot;$buildDir/reports/my-report.pdf&quot;, &quot;src/docs/manual.pdf&quot;
+    into &quot;$buildDir/toArchive&quot;
+&#125;
+
+task copyPdfReportsForArchiving(type: Copy) &#123;
+    from &quot;$buildDir/reports&quot;
+    include &quot;*.pdf&quot;
+    into &quot;$buildDir/toArchive&quot;
+&#125;
+
+// .2 Archive or UnPack
+task packageDistribution(type: Zip) &#123;
+    archiveFileName = &quot;my-distribution.zip&quot;
+    destinationDirectory = file(&quot;$buildDir/dist&quot;)
+
+    from &quot;$buildDir/toArchive&quot;
+&#125;
+
+task unpackFiles(type: Copy) &#123;
+    from zipTree(&quot;src/resources/thirdPartyResources.zip&quot;)
+    into &quot;$buildDir/resources&quot;
+&#125;
+
+// .3 Creating &quot;uber&quot; or &quot;fat&quot; JARs
+plugins &#123;
+    id &#39;java&#39;
+&#125;
+
+version = &#39;1.0.0&#39;
+
+repositories &#123;
+    mavenCentral()
+&#125;
+
+dependencies &#123;
+    implementation &#39;commons-io:commons-io:2.6&#39;
+&#125;
+
+task uberJar(type: Jar) &#123;
+    archiveClassifier = &#39;uber&#39;
+
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from &#123;
+        configurations.runtimeClasspath.findAll &#123; it.name.endsWith(&#39;jar&#39;) &#125;.collect &#123; zipTree(it) &#125;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="管理依赖"><a href="#管理依赖" class="headerlink" title="管理依赖"></a>管理依赖</h3><h4 id="依赖类型"><a href="#依赖类型" class="headerlink" title="依赖类型"></a>依赖类型</h4><pre><code class="groovy">// module dependencies
+dependencies &#123;
+    runtime group: &#39;org.springframework&#39;, name: &#39;spring-core&#39;, version: &#39;2.5&#39;
+    implementation &#39;org.springframework:spring-web:5.+&#39;
+    implementation(&#39;org.ow2.asm:asm:6.0&#39;) &#123;
+        because &#39;we require a JDK 9 compatible bytecode generator&#39;
+    &#125;
+&#125;
+
+// file dependencies
+dependencies &#123;
+    runtime files(&#39;libs/a.jar&#39;, &#39;libs/b.jar&#39;)
+    runtime fileTree(&#39;libs&#39;) &#123; include &#39;*.jar&#39; &#125;
+&#125;
+
+// project dependencies
+dependencies &#123;
+    implementation project(&#39;:shared&#39;)
+&#125;
+</code></pre>
+<h4 id="仓库类型"><a href="#仓库类型" class="headerlink" title="仓库类型"></a>仓库类型</h4><pre><code class="groovy">// flat dir
+repositories &#123;
+    flatDir &#123;
+        dirs &#39;lib&#39;
+    &#125;
+    flatDir &#123;
+        dirs &#39;lib1&#39;, &#39;lib2&#39;
+    &#125;
+&#125;
+
+// maven repo
+repositories &#123;
+    mavenCentral()
+      jcenter()
+    google()
+    mavenLocal()
+    maven &#123;
+        url &quot;http://repo.mycompany.com/maven2&quot;
+    &#125;
+    maven &#123;
+        url &quot;http://repo.mycompany.com/snapshots&quot;
+        mavenContent &#123;
+            snapshotsOnly()
+        &#125;
+    &#125;
+    maven &#123;
+        url &quot;sftp://repo.mycompany.com:22/maven2&quot;
+        credentials &#123;
+            username &quot;user&quot;
+            password &quot;password&quot;
+        &#125;
+    &#125;
+    
+&#125;
+</code></pre>
+<h4 id="版本冲突"><a href="#版本冲突" class="headerlink" title="版本冲突"></a>版本冲突</h4><p>如果存在依赖的版本冲突，那么 gradle 默认会选择最高版本的的依赖以解决依赖冲突，当然我们也可以手动解决，比如排除依赖，或者手动设置一个版本。当然，一般使用 gradle 默认的处理就可以了。</p>
+<pre><code class="groovy">//  Excluding transitive dependency for a particular dependency declaration
+dependencies &#123;
+    implementation(&#39;log4j:log4j:1.2.15&#39;) &#123;
+        exclude group: &#39;javax.jms&#39;, module: &#39;jms&#39;
+        exclude group: &#39;com.sun.jdmk&#39;, module: &#39;jmxtools&#39;
+        exclude group: &#39;com.sun.jmx&#39;, module: &#39;jmxri&#39;
+    &#125;
+&#125;
+
+// Excluding transitive dependency for a particular configuration
+configurations &#123;
+    implementation &#123;
+        exclude group: &#39;javax.jms&#39;, module: &#39;jms&#39;
+        exclude group: &#39;com.sun.jdmk&#39;, module: &#39;jmxtools&#39;
+        exclude group: &#39;com.sun.jmx&#39;, module: &#39;jmxri&#39;
+    &#125;
+&#125;
+
+dependencies &#123;
+    implementation &#39;log4j:log4j:1.2.15&#39;
+&#125;
+
+// Enforcing a dependency version
+dependencies &#123;
+    implementation &#39;org.apache.httpcomponents:httpclient:4.5.4&#39;
+    implementation(&#39;commons-codec:commons-codec:1.9&#39;) &#123;
+        force = true
+    &#125;
+&#125;
+</code></pre>
+<h3 id="多项目构建"><a href="#多项目构建" class="headerlink" title="多项目构建"></a>多项目构建</h3><p>多项目构建就是在 <strong>root project</strong>配置一个 <strong>settings.gradle</strong> 引入需要的子项目即可，</p>
+<p>比如我这边 <strong>root project</strong> 为  todo-gradle，有三个 <strong>sub project</strong> ，</p>
+<p>则 <strong>settings.gradle</strong> 配置如下</p>
+<pre><code class="groovy">rootProject.name = &#39;todo-gradle&#39;
+include &#39;web&#39;
+include &#39;model&#39;
+include &#39;dao&#39;
+</code></pre>
+<p>如果，<strong>sub project</strong> 很多配置项一样，那我们可以在 <strong>root project</strong> 的 <strong>build.gradle</strong> 构建脚本里进行通用的配置，使其对子项目生效，</p>
+<pre><code class="groovy">allprojects &#123;
+
+    apply plugin: &#39;java&#39;
+
+    sourceCompatibility = 1.8
+&#125;
+
+subprojects &#123;
+
+    repositories &#123;
+        mavenCentral()
+    &#125;
+
+
+    dependencies &#123;
+        testCompile group: &#39;junit&#39;, name: &#39;junit&#39;, version: &#39;4.12&#39;
+    &#125;
+
+
+&#125;
+</code></pre>
+<p>如果自定义的配置的任务或者选项，则在每个 <strong>project</strong> 的 <strong>build.gradle</strong> 构建脚本里配置即可，比如我 <strong>web sub project</strong> 还引入了 <strong>The War Plugin</strong>，那么我在 <strong>web sub project</strong> 的<strong>build.gradle</strong> 构建脚本可以配置如下</p>
+<pre><code class="groovy">apply plugin: &#39;war&#39;
+</code></pre>
+<p>最后就是项目依赖配置了，比如我 <strong>dao sub project</strong> 依赖 <strong>model sub project</strong></p>
+<pre><code class="groovy">dependencies &#123;
+    implementation project(&#39;:model&#39;)
+&#125;
+</code></pre>
+<p>因为依赖是可以传递的，所以假如我 <strong>web sub project</strong> 依赖 <strong>dao sub project</strong> 跟 <strong>model sub project</strong>，而 <strong>dao sub project</strong> 又依赖 <strong>model sub project</strong>，实际上我只要在 <strong>web sub projec</strong>t 构建脚本里面依赖 <strong>dao sub project</strong> 即可</p>
+<pre><code class="groovy">
+dependencies &#123;
+    implementation project(&#39;:dao&#39;)
+&#125;
+</code></pre>
+<p>如果存在依赖关系，显而易见，那么被依赖的项目或者任务都会先执行。</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>一般只要类继承 <strong>junit.framework.TestCase</strong> 或者 <strong>groovy.util.GroovyTestCase</strong> </p>
+<p>或是假如使用 springboot 框架，带有 <strong>@RunWith</strong> 注解的类</p>
+<p>最常见的就是任何至少一个包含 <strong>@Test</strong> 注解的类</p>
+<p>当然，不同测试框架使用大同小异，你可以具体使用的时候查阅下资料即可，</p>
+<p>下面官方的代码实例就显示了 <strong>test task</strong> 的相关配置。 </p>
+<p>Executes JUnit (3.8.x, 4.x or 5.x) or TestNG tests. Test are always run in (one or more) separate JVMs. The sample below shows various configuration options.</p>
+<pre><code class="groovy">apply plugin: &#39;java&#39; // adds &#39;test&#39; task
+
+test &#123;
+  // enable TestNG support (default is JUnit)
+  useTestNG()
+  // enable JUnit Platform (a.k.a. JUnit 5) support
+  useJUnitPlatform()
+
+  // set a system property for the test JVM(s)
+  systemProperty &#39;some.prop&#39;, &#39;value&#39;
+
+  // explicitly include or exclude tests
+  include &#39;org/foo/**&#39;
+  exclude &#39;org/boo/**&#39;
+
+  // show standard out and standard error of the test JVM(s) on the console
+  testLogging.showStandardStreams = true
+
+  // set heap size for the test JVM(s)
+  minHeapSize = &quot;128m&quot;
+  maxHeapSize = &quot;512m&quot;
+
+  // set JVM arguments for the test JVM(s)
+  jvmArgs &#39;-XX:MaxPermSize=256m&#39;
+
+  // listen to events in the test execution lifecycle
+  beforeTest &#123; descriptor -&gt;
+     logger.lifecycle(&quot;Running test: &quot; + descriptor)
+  &#125;
+
+  // Fail the &#39;test&#39; task on the first test failure
+  failFast = true
+
+  // listen to standard out and standard error of the test JVM(s)
+  onOutput &#123; descriptor, event -&gt;
+     logger.lifecycle(&quot;Test: &quot; + descriptor + &quot; produced standard out/err: &quot; + event.message )
+  &#125;
+&#125;
+</code></pre>
+<p>一般测试的最终结果，会显示在 <strong>project</strong> 的 <strong>build/reports</strong> 目录里面</p>
+<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><p>假如我们开发完一个功能模块，打包成一个 jar 包，需要提供给他人依赖引用，那么我们就可以发布出去了，一般 gradle 没有自己的仓库，如果是java 项目的话一般都是发布到 <strong>maven</strong> 仓库，因为 <strong>lvh</strong> 现在用的人比较少了，这里就简单的介绍一下怎么发布到 maven 仓库</p>
+<h4 id="Maven-Publish-Pluging"><a href="#Maven-Publish-Pluging" class="headerlink" title="Maven Publish Pluging"></a>Maven Publish Pluging</h4><pre><code class="groovy">apply plugin: &#39;maven-publish&#39;
+
+publishing &#123;
+    
+    publications &#123;
+        maven(MavenPublication) &#123;
+            groupId = &#39;org.gradle.sample&#39;
+            artifactId = &#39;project1-sample&#39;
+            version = &#39;1.1&#39;
+
+            from components.java
+        &#125;
+    &#125;
+    
+    repositories &#123;
+        maven &#123;
+            name = &#39;myRepo&#39;
+            def releasesRepoUrl = &quot;$buildDir/repos/releases&quot;
+            def snapshotsRepoUrl = &quot;$buildDir/repos/snapshots&quot;
+            url = version.endsWith(&#39;SNAPSHOT&#39;) ? snapshotsRepoUrl : releasesRepoUrl
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h2><p><a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/userguide.html"><strong>官方用户手册</strong></a></p>
+<p><a target="_blank" rel="noopener" href="https://www.imooc.com/learn/833"><strong>慕课网新一代构建工具gradle</strong></a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jianchengwang/todo-java"><strong>TODO 代码</strong></a></p>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/posts/87368208.html" title="我们来聊聊JAVA8"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">上一页: 我们来聊聊JAVA8</span></a><a class="button is-default" href="/posts/518e617c.html" title="git"><span class="has-text-weight-semibold">下一页: git</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>深入Vue源代码解决时序问题一</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="
+viola 是一个支持 Vue 的动态化框架，其 Vue 版本在 Vue 官方版本 2.5.7 上进行了少量改写，本文针对其进行具体分析。
+
+最初，有使用者报告一个错误：在 iOS 系统，退出页面的时候，框架报错：
+TypeError: undefined is not an object(evaluating &amp;#39;e.isDestroyed&amp;quot;
+
+接到这个错误之后，我首先进入 Vue 的 debug 版本，尝试获取更详细的信息：
+TypeError: undefined is not an object(evaluating &amp;#39;componentInstance.isDestroyed&amp;quot;
+
+我们顺利地拿到了报错的变量名称，去 Vue 源代码中搜索，我们可以发现报错之处：
+.."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">深入Vue源代码解决时序问题一</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">点击返回顶部</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile is-hidden"></div><div class="column is-9"><header class="my-4"><a href="/tags/Vue"><i class="tag post-item-tag">Vue</i></a><a href="/tags/viola"><i class="tag post-item-tag">viola</i></a></header><h1 class="mt-0 mb-1 is-family-serif" id="postTitle">深入Vue源代码解决时序问题一</h1><time class="has-text-grey" datetime="2019-07-06T07:21:51.000Z">2019-07-06</time><article class="mt-2 post-content"><blockquote>
+<p>viola 是一个支持 Vue 的动态化框架，其 Vue 版本在 Vue 官方版本 2.5.7 上进行了少量改写，本文针对其进行具体分析。</p>
+</blockquote>
+<p>最初，有使用者报告一个错误：在 iOS 系统，退出页面的时候，框架报错：</p>
+<pre><code>TypeError: undefined is not an object(evaluating &#39;e.isDestroyed&quot;
+</code></pre>
+<p>接到这个错误之后，我首先进入 Vue 的 debug 版本，尝试获取更详细的信息：</p>
+<pre><code>TypeError: undefined is not an object(evaluating &#39;componentInstance.isDestroyed&quot;
+</code></pre>
+<p>我们顺利地拿到了报错的变量名称，去 Vue 源代码中搜索，我们可以发现报错之处：</p>
+<pre><code class="javascript">destroy: function destroy (vnode) &#123;
+    var componentInstance = vnode.componentInstance;
+    if (!componentInstance._isDestroyed) &#123; // 这里报错
+      if (!vnode.data.keepAlive) &#123;
+        componentInstance.$destroy();
+      &#125; else &#123;
+        deactivateChildComponent(componentInstance, true /* direct */);
+      &#125;
+    &#125;
+  &#125;
+</code></pre>
+<p>这里是 <code>componentInstance</code> 为 undefined，这个实际上是 vnode 的实例，其为 undefined，说明该 vue 组件在之前的阶段就已经出错不正常了，这里并不是错误的根源所在，我们需要再次进行寻找报错原因。</p>
+<p>于是我们查看业务代码的所有日志，又发现了这样一条报错：</p>
+<pre><code>[Vue warn]: Error in nextTick: &quot;TypeError: undefined is not an object (evaluating &#39;vm.$options&#39;)&quot; 
+</code></pre>
+<p>初始化阶段出现这样一个错误，我们怀疑 <code>vm</code> 就是上文的 <code>componentInstance</code>，于是，我们打印报错堆栈：</p>
+<pre><code class="javascript"> 调用栈:
+function updateChildComponent(
+    vm,
+    propsData,
+    listeners,
+    parentVnode,
+    renderChildren
+  ) &#123;
+        //...
+        var hasChildren = !!(
+              renderChildren ||
+              vm.$options._renderChildren || // 这里报错
+              parentVnode.data.scopedSlots ||
+              vm.$scopedSlots !== emptyObject
+            );
+    &#125;
+
+function prepatch(oldVnode, vnode) &#123;
+      var options = vnode.componentOptions;
+      var child = vnode.componentInstance = oldVnode.componentInstance;
+      updateChildComponent(
+        child,
+        options.propsData,
+        options.listeners,
+        vnode,
+        options.children
+      );
+    &#125;
+
+function patchVnode(oldVnode, vnode, insertedVnodeQueue, removeOnly) &#123;&#125;
+function patch(oldVnode, vnode, hydrating, removeOnly) &#123;&#125;
+function (vnode, hydrating) &#123;&#125;
+function () &#123;
+        vm._update(vm._render(), hydrating);
+      &#125;
+function get() &#123;&#125;
+function getAndInvoke(cb) &#123;&#125;
+function run() &#123;&#125;
+function flushSchedulerQueue() &#123;&#125;
+function flushCallbacks() &#123;&#125;
+</code></pre>
+<p>调用栈实际上有点冗长，不过我们还是能发现两个有用的信息：</p>
+<ul>
+<li>初始化阶段为 <code>undefined</code> 的 <code>vm</code>，就是 <code>componentInstance</code>，也就是和 destroy 阶段的报错属于同一个原因。</li>
+<li>根据调用栈发现，这是一个更新阶段的报错。</li>
+</ul>
+<p>这引发了我们的思考：更新阶段找不到 <code>componentInstance</code> 报错。</p>
+<p>这里实际上有点阻塞了，因为一般来说，Vue 的源代码经过测试，应该不会出现这种问题的，那是不是我们的问题呢，我们回归到业务代码：</p>
+<pre><code>created() &#123;
+    this.getFeedsListFromCache();
+&#125;,
+methods: &#123;
+    getFeedsListFromCache() &#123;
+        viola.requireAPI(&quot;cache&quot;).getItem(this.cacheKey_feeds, data =&gt; &#123;
+            this.processData(data.list);
+        &#125;);
+    &#125;,
+    processData(list = [], opt = &#123;&#125;) &#123;
+        if (this.list.length &lt; cacehFeedsLength) &#123;
+        &#125;
+        this.list = [];
+    &#125;,
+&#125;
+</code></pre>
+<p>我们对业务代码进行了抽象简化，上面是我们的最小问题 Demo，实际上我们就做了这样一件事情：</p>
+<ul>
+<li>在 created 执行方法，调用端的接口，再回调函数里面更新某个 data 中声明的数据。</li>
+</ul>
+<p>首先，我们可以梳理下对一般 vue 组件的初始化更新，vue 是如何做的：</p>
+<ul>
+<li>created 时实际上 vnode 已经建立完成，这个时候还没有 mount，但是数据监听已经建立了，这个时候如果改动数据，会把相关 update 函数放在一个名为 flushCallbacks 的函数队列中。</li>
+<li>该函数队列会通过默认为 <code>Promise.then</code> 的 microtask 方式来调度，当前阶段的 mount 流程会继续，mount 结束后，会执行 flushCallbacks 队列中的更新操作。</li>
+</ul>
+<p>从代码层面上来讲，这几个流程应该是这样的：</p>
+<pre><code> ├── callHook(vm, &#39;created&#39;); // 执行created 钩子
+ ├── proxySetter(val); // 改变数据，调用 proxy
+ ├── Watcher.prototype.update; // 调用 Watcher，将 update 操作入栈
+ ├── vm.$mount(vm.$options.el); // 执行 mount 流程
+ ├── callHook(vm, &#39;beforeMount&#39;);
+ ├──  callHook(vm, &#39;mounted&#39;); // 依次调用 beforeMount 和 mounted
+ └── flushCallbacks // 执行 更新
+</code></pre>
+<p>然后我们分析我们这里的流程，首先值得强调的是这个函数 <code>viola.requireAPI(&quot;cache&quot;).getItem</code>，这个函数是端注入的函数，但我们不能将其当作异步函数来对待，实际上，<strong>这是一个同步函数</strong>，（至于这个同步函数和 js 中的普通函数，是否有区别，还有待商榷，不过应该是有区别的，因为如果我们不用此函数的话，就不会出现该问题。）</p>
+<p>接下来，我们打出详细的调用栈，根据顺序来分析实际的执行流程：</p>
+<pre><code> ├── callHook(vm, &#39;created&#39;); // 执行created 钩子
+ ├── proxySetter(val); // 改变数据，调用 proxy
+ ├── Watcher.prototype.update; // 调用 Watcher，将 update 操作入栈
+ ├── flushCallbacks // 执行 更新
+ ├── vm.$mount(vm.$options.el); // 执行 mount 流程 
+ ├── callHook(vm, &#39;beforeMount&#39;);
+ └── callHook(vm, &#39;mounted&#39;); // 依次调用 beforeMount 和 mounted
+</code></pre>
+<p>我们发现，我们的执行流程出现了很大问题：<strong>在 mount 阶段未完成的时候就执行了 flushCallbacks，先执行更新操作，这里的顺序错乱导致了后续问题</strong>。</p>
+<p>我们可看下调用 <code>flushCallbacks</code> 的代码：</p>
+<pre><code class="javascript">if (typeof Promise !== &#39;undefined&#39; &amp;&amp; isNative(Promise)) &#123;
+  var p = Promise.resolve();
+  microTimerFunc = function () &#123;
+    p.then(flushCallbacks);
+    // in problematic UIWebViews, Promise.then doesn&#39;t completely break, but
+    // it can get stuck in a weird state where callbacks are pushed into the
+    // microtask queue but the queue isn&#39;t being flushed, until the browser
+    // needs to do some other work, e.g. handle a timer. Therefore we can
+    // &quot;force&quot; the microtask queue to be flushed by adding an empty timer.
+    if (isIOS) &#123; setTimeout(noop); &#125;
+  &#125;;
+&#125; 
+</code></pre>
+<p>这里 <code>microTimerFunc</code> 的 <code>p.then</code>，被同步执行了，也就是说，这里的微任务优先于当前事件循环的函数执行了（此时由于 mount 流程是同步的，mount 流程的相关函数<strong>理应</strong>在该事件循环中，优先于微任务执行）。</p>
+<p>我们找到了根源，接下来就是分析解决方案和根本原因。</p>
+<p>由于我们的问题在于 update 流程执行太快了，所以采用一种方式放慢一点即可：</p>
+<ul>
+<li>将 vue 的微任务模式（默认）改成宏任务模式：<code>var useMacroTask = false; =&gt; true</code>。</li>
+<li>在 created 阶段的加一个 <code>setTimeout(0)</code>。</li>
+</ul>
+<p>不过对于根本原因，实际上本次仍然没有完全分析透彻，还留有如下疑问：</p>
+<ul>
+<li><code>viola.requireAPI(&quot;cache&quot;).getItem</code> 这个函数到底做了什么？其对事件循环有什么影响？</li>
+<li>在执行 <code>microTimerFunc</code> 的时候，为什么 <code>p.then</code> 优先于 <code>vm.$mount</code> 执行了？</li>
+<li>该错误仅在 iOS 系统出现，iOS 系统是否会在某些情况将微任务的优先级变高？</li>
+</ul>
+<p>对于这些疑问，Vue 源代码中也做了一些评论：</p>
+<pre><code>// Here we have async deferring wrappers using both microtasks and (macro) tasks.
+// In &lt; 2.4 we used microtasks everywhere, but there are some scenarios where
+// microtasks have too high a priority and fire in between supposedly
+// sequential events (e.g. #4521, #6690) or even between bubbling of the same
+// event (#6566). However, using (macro) tasks everywhere also has subtle problems
+// when state is changed right before repaint (e.g. #6813, out-in transitions).
+// Here we use microtask by default, but expose a way to force (macro) task when
+// needed (e.g. in event handlers attached by v-on).
+</code></pre>
+<p>不过，这里始终都没有找到最本质的原因，也许这和 iOS JSCore 的微任务/宏任务的处理机制有关，具体原因，待下次探究。</p>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/posts/7cbb746d.html" title="Rust初探:实现二叉树的增删与遍历"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">上一页: Rust初探:实现二叉树的增删与遍历</span></a><a class="button is-default" href="/posts/c0b2306.html" title="web应用开发与部署——你必须掌握的内容"><span class="has-text-weight-semibold">下一页: web应用开发与部署——你必须掌握的内容</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>

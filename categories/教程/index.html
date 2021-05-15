@@ -1,0 +1,97 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>AIENS.'s blog</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/widget-post-list.css"><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><span>分类 · 教程</span></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><article class="post-container is-flex is-justify-content-center section container is-max-widescreen pt-4 px-2"><div class="columns is-variable is-1-tablet is-3-desktop-only is-2-widescreen is-full-width"><section class="column"><article class="post-item-card"><header class="is-relative is-flex"><div class="post-cover-backdrop is-hidden"><img src="https://upimage.alexhchu.com/2020/11/19/78720d40ff2ca.png" alt="loading.."></div><a class="post-cover-link has-text-centered skeleton" href="/posts/0.html"><img class="post-cover-img js-img-fadeIn" src="https://upimage.alexhchu.com/2020/11/19/78720d40ff2ca.png" alt="loading.." data-backdrop="true"></a></header><section class="content post-card-content p-4 pb-5"><header><a href="/tags/linux"><i class="tag post-item-tag">linux</i></a><a href="/tags/JAVA"><i class="tag post-item-tag">JAVA</i></a><a href="/tags/JVM"><i class="tag post-item-tag">JVM</i></a></header><h2 class="mt-4 mb-0 is-family-serif"><a href="/posts/0.html">从Linux内核理解JAVA的NIO</a></h2><time class="has-text-grey" datetime="2021-05-14T12:31:57.854Z">2021-05-14</time><p class="is-flex-grow-2 mt-2">
+前言IO 可以简单分为磁盘 IO 和 网络 IO ,磁盘 IO 相对于网络 IO 速度会快一点，本文主要介绍 磁盘 IO ，网络 IO 下周写。
+JAVA 对  NIO 抽象为 Channel , Channel 又可以分为 FileChannel （磁盘 io）和 SocketChannel （网络 io）。
+如果你对 IO 的理解只是停留在 api 层面那是远远不够的，一定要了解 IO 在系统层面是怎么处理的。
+本文内容：
+FileChannel 读写复制文件的用法。
+ByteBuffer 的介绍
+jvm 文件进程锁，FileLock
+HeapByteBuffer ，DirectByteBuffer 和 mmap 谁的速度更快
+从 Linux 内核 中的 虚拟内存 、系统调用、文件描述符、Inode、..</p><a class="button is-default mt-2 has-text-weight-semibold" href="/posts/0.html">更多</a></section></article><article class="post-item-card"><section class="content post-card-content p-4 pb-5"><header><a href="/tags/%E6%95%99%E7%A8%8B"><i class="tag post-item-tag">教程</i></a><a href="/tags/butterfly"><i class="tag post-item-tag">butterfly</i></a></header><h2 class="mt-4 mb-0 is-family-serif"><a href="/posts/853e67k7.html">基于butterfly标签页头部透明</a></h2><time class="has-text-grey" datetime="2021-01-30T11:26:30.000Z">2021-01-30</time><p class="is-flex-grow-2 mt-2">前言这玩意只是适用于butterfly，具体效果看本文头图，没错没了。为什么我要写这玩意呢？因为群里某个叫天的人一直在那bb说要改Butterfly的头图，他一个劲的问，我一个劲的回答，然后我发现，朽木不可雕也！废话不多说，直接进入教程。
+教程首先，在博客根目录找到_config.butterfly.yml，打开，然后在里面搜索配置
+# Image (圖片設置)
+# --------------------------------------
+
+# The banner image of home page
+index_img:
+
+# If the banner of page not setting, it will show the top_img
+default_top_img:
+
+# The ban..</p><a class="button is-default mt-2 has-text-weight-semibold" href="/posts/853e67k7.html">更多</a></section></article><article class="post-item-card"><header class="is-relative is-flex"><div class="post-cover-backdrop is-hidden"><img src="https://docs.microsoft.com/zh-cn/windows/terminal/images/overview.png" alt="loading.."></div><a class="post-cover-link has-text-centered skeleton" href="/posts/b9a9514u.html"><img class="post-cover-img js-img-fadeIn" src="https://docs.microsoft.com/zh-cn/windows/terminal/images/overview.png" alt="loading.." data-backdrop="true"></a></header><section class="content post-card-content p-4 pb-5"><header><a href="/tags/shell"><i class="tag post-item-tag">shell</i></a><a href="/tags/windows"><i class="tag post-item-tag">windows</i></a><a href="/tags/terminal"><i class="tag post-item-tag">terminal</i></a></header><h2 class="mt-4 mb-0 is-family-serif"><a href="/posts/b9a9514u.html">Windows terminal 的安装和美化</a></h2><time class="has-text-grey" datetime="2021-01-01T14:16:05.000Z">2021-01-01</time><p class="is-flex-grow-2 mt-2">前言这段时间呢，我一直是用cmder或者windows ISE的，但是这两货的优点很多，缺点也不少，比如说：启动慢（ISE一个启动都要2s，我打命令都打完了他还没启动完），颜值低（ISE不支持更改外观，cmder可以更改的地方很少。）于是，我到一些群里面去问：“有没有大佬，求一个windows下的Shell客户端”，回答的答案很多：“cmder,Xshell,WSL(Windows子Linux),Windows terminal”，当我看到windows terminal的时候，我脑中浮现出一个奇怪的问题：“可以魔改吗？”，于是我发出了这个问题，得到的结果是：“可以”，我那颗折腾的心变得Exciting了起来!
+下载怎么下载呢？你可以在这个链接下载,或者直接到Windows Store里面搜索”window..</p><a class="button is-default mt-2 has-text-weight-semibold" href="/posts/b9a9514u.html">更多</a></section></article><article class="post-item-card"><header class="is-relative is-flex"><div class="post-cover-backdrop is-hidden"><img src="https://rmt.dogedoge.com/fetch/hi-c-oss/storage/cUEQrVYGFiDjqhy.jpg" alt="loading.."></div><a class="post-cover-link has-text-centered skeleton" href="/posts/eb490c73.html"><img class="post-cover-img js-img-fadeIn" src="https://rmt.dogedoge.com/fetch/hi-c-oss/storage/cUEQrVYGFiDjqhy.jpg" alt="loading.." data-backdrop="true"></a></header><section class="content post-card-content p-4 pb-5"><header><a href="/tags/%E5%9B%BE%E5%BA%8A"><i class="tag post-item-tag">图床</i></a><a href="/tags/%E7%99%BD%E5%AB%96"><i class="tag post-item-tag">白嫖</i></a><a href="/tags/PicGo"><i class="tag post-item-tag">PicGo</i></a></header><h2 class="mt-4 mb-0 is-family-serif"><a href="/posts/eb490c73.html">图床的千层套路</a></h2><time class="has-text-grey" datetime="2020-09-17T13:54:41.000Z">2020-09-17</time><p class="is-flex-grow-2 mt-2">本文转载于CYF ，已获得其本人同意 &amp;ensp;&amp;ensp; 原文👉  图床的千层套路
+
+
+
+
+ 博客最近在细心打磨终于上95分了，其中我认为图片功劳不可没。
+
+2020年8月9日Jsdelivr发布了一次使用政策：Create Acceptable Use Policy，其中第4条Prohibited Use引起了众多议论：
+4. Prohibited Use
+
+The following behavior is prohibited:
+
+ 1. Hosting or accessing content that:
+     - contains malware or harmful code in any form,
+     - violates proprietary rights of oth..</p><a class="button is-default mt-2 has-text-weight-semibold" href="/posts/eb490c73.html">更多</a></section></article><article class="post-item-card"><header class="is-relative is-flex"><div class="post-cover-backdrop is-hidden"><img src="https://cdn.jsdelivr.net/gh/wayne0926/myphoto/img/jsdelivr1.jpg" alt="loading.."></div><a class="post-cover-link has-text-centered skeleton" href="/posts/c4933820.html"><img class="post-cover-img js-img-fadeIn" src="https://cdn.jsdelivr.net/gh/wayne0926/myphoto/img/jsdelivr1.jpg" alt="loading.." data-backdrop="true"></a></header><section class="content post-card-content p-4 pb-5"><header><a href="/tags/github"><i class="tag post-item-tag">github</i></a><a href="/tags/%E6%95%99%E7%A8%8B"><i class="tag post-item-tag">教程</i></a><a href="/tags/hexo"><i class="tag post-item-tag">hexo</i></a><a href="/tags/cdn"><i class="tag post-item-tag">cdn</i></a><a href="/tags/jsdelivr"><i class="tag post-item-tag">jsdelivr</i></a></header><h2 class="mt-4 mb-0 is-family-serif"><a href="/posts/c4933820.html">JsDelivr图床</a></h2><time class="has-text-grey" datetime="2020-08-12T15:40:02.000Z">2020-08-12</time><p class="is-flex-grow-2 mt-2">介绍先说一下：
+JsDelivr是GitHub的CDN
+直接访问即可。
+使用GitHub新建一个库，放图片。
+（细说略。。）
+PicGo下载不说了。
+默认的不好用。
+用插件githubPlus
+配置
+
+
+项目
+描述
+
+
+
+repo
+你的库名：用户名/库名
+
+
+branch
+直接填：master
+
+
+token
+Github申请token(后面讲)
+
+
+path
+库内路径(选)：img/
+
+
+customUrl
+使用JsDerlivr：https://cdn.jsdelivr.net/gh/用户名/库名
+
+
+origin
+选github
+
+
+GitHub TokenGitHub申请Token
+
+注意： Token妥善保管，且只显示一次。
+上传
+如果出错，改个名字，重试。
+视频版
+
+
+</p><a class="button is-default mt-2 has-text-weight-semibold" href="/posts/c4933820.html">更多</a></section></article></section><aside class="column is-hidden-mobile is-4-tablet is-3-widescreen"><div style="position: sticky; top: 50px;"><main class="aside-card-container categories-widget category-page"><h3>分类</h3><section><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Biological/">Biological</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/IntelliJ-IDEA/">IntelliJ IDEA</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA/">JAVA</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mac/">Mac</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/TeamCity/">TeamCity</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Toss-Note/">Toss Note</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Vue-JS/">Vue.JS</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/github/">github</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/gulp/">gulp</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/photoshop/">photoshop</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ssh/">ssh</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/twikoo/">twikoo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/vscode/">vscode</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web/">web</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%BB%E9%A2%98/">主题</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%8E%86%E5%8F%B2/">历史</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95/">学习方法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AD%A6%E4%B9%A0%E6%97%A5%E8%AE%B0/">学习日记</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B0%8F%E6%8A%80%E5%B7%A7/">小技巧</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8F%92%E4%BB%B6/">插件</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%90%9E%E6%9C%BA/">搞机</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%99%E7%A8%8B/">教程</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%96%87%E7%AB%A0%E5%8F%91%E5%B8%83/">文章发布</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B8%B8%E6%88%8F/">游戏</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%B3%BB%E7%BB%9F/">系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%BD%AF%E4%BB%B6/">软件</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%80%B2%E9%9A%8E%E6%95%99%E7%A8%8B/">進階教程</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%BB%84%E8%89%B2/">黄色</a><span class="category-list-count">1</span></li></ul></section></main></div></aside></div></article><script>$claudia.fadeInImage(null, $claudia.blurBackdropImg)
+
+window.addEventListener('resize', $claudia.throttle(function () {
+    var images = document.querySelectorAll('.js-img-fadeIn')
+
+    images.forEach($claudia.blurBackdropImg)
+}, 150))</script></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script>$claudia.fadeInImage(null, $claudia.blurBackdropImg)
+
+window.addEventListener('resize', $claudia.throttle(function () {
+    var images = document.querySelectorAll('.js-img-fadeIn')
+
+    images.forEach($claudia.blurBackdropImg)
+}, 150))</script></body></html>

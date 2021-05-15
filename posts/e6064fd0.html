@@ -1,0 +1,166 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>Vue.JS基础的详讲( 组件 )</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="
+组件
+Vue的组件是Vue.JS里最难掌握的，当然也是最有趣，精彩的。
+
+基本分类为
+
+根组件
+可复用的功能组件
+
+根组件的创建通过 vue 提供的构造函数可以实例化出来一个跟组件实例对象
+let app = new Vue(创建组件所需要的一些配置选项); // [根组件]
+
+[vue组件，配置（声明式）构建方式React组件，命令式] 
+// 对于React
+        // render函数:确定组件的视图
+        class MyComponent extends React.Component&amp;#123;
+
+        &amp;#125;
+        ReactDOM.render(
+            &amp;lt;MyComponent&amp;gt;,
+            docu.."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">Vue.JS基础的详讲( 组件 )</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">点击返回顶部</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6"><span class="toc-text">组件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B9%E7%BB%84%E4%BB%B6%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="toc-text">根组件的创建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9A%84%E5%8A%9F%E8%83%BD%E7%BB%84%E4%BB%B6"><span class="toc-text">可复用的功能组件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E5%86%85%E5%AE%B9%E6%B8%B2%E6%9F%93"><span class="toc-text">组件内容渲染</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#template"><span class="toc-text">template</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#el"><span class="toc-text">el</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#render"><span class="toc-text">render</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-mount-%E6%96%B9%E6%B3%95%E5%BB%B6%E8%BF%9F-Vue-%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%8C%82%E8%BD%BD"><span class="toc-text">使用 $mount 方法延迟 Vue 实例的挂载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B8%B2%E6%9F%93%E7%9A%843%E4%B8%AA%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-text">渲染的3个注意事项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%88%E7%8A%B6%E6%80%81%EF%BC%89"><span class="toc-text">组件中的数据（状态）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vue-%E5%AE%9E%E4%BE%8B%E7%BB%84%E4%BB%B6%EF%BC%88%E6%A0%B9%E7%BB%84%E4%BB%B6%EF%BC%89%E7%9A%84-data-%E6%98%AF%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1"><span class="toc-text">Vue 实例组件（根组件）的 data 是一个对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#data-%E7%9A%84%E8%AE%BF%E9%97%AE"><span class="toc-text">data 的访问</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95"><span class="toc-text">模板语法</span></a></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/Vue.js"><i class="tag post-item-tag">Vue.js</i></a><a href="/tags/Web"><i class="tag post-item-tag">Web</i></a></header><h1 class="mt-0 mb-1 is-family-serif" id="postTitle">Vue.JS基础的详讲( 组件 )</h1><time class="has-text-grey" datetime="2021-04-27T13:08:17.000Z">2021-04-27</time><article class="mt-2 post-content"><p><img src="https://upimage.alexhchu.com/2021/04/26/600553b2765ec.jpg" alt="$cover"></p>
+<h3 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h3><blockquote>
+<p>Vue的组件是Vue.JS里最难掌握的，当然也是最有趣，精彩的。</p>
+</blockquote>
+<p>基本分类为</p>
+<ul>
+<li>根组件</li>
+<li>可复用的功能组件</li>
+</ul>
+<h4 id="根组件的创建"><a href="#根组件的创建" class="headerlink" title="根组件的创建"></a>根组件的创建</h4><p>通过 <code>vue</code> 提供的构造函数可以实例化出来一个跟组件实例对象</p>
+<pre><code class="js">let app = new Vue(创建组件所需要的一些配置选项); // [根组件]
+</code></pre>
+<p><em>[vue组件，配置（声明式）构建方式<br>React组件，命令式]</em> </p>
+<pre><code class="js">// 对于React
+        // render函数:确定组件的视图
+        class MyComponent extends React.Component&#123;
+
+        &#125;
+        ReactDOM.render(
+            &lt;MyComponent&gt;,
+            document.querySelector(&#39;#app&#39;)
+        );
+
+// 对于Vue
+        let app = new Vue(&#123;
+            el:&#39;#app&#39;,//挂载点
+            template:`
+                &lt;div&gt;这是vue&lt;/div&gt;
+            `          //最后组件产生的视图覆盖掉挂载点
+        &#125;)
+
+        如果不写el挂载点，只有模板。使用app对象.$mount(&#39;#app&#39;); // 手动挂载
+</code></pre>
+<h4 id="可复用的功能组件"><a href="#可复用的功能组件" class="headerlink" title="可复用的功能组件"></a>可复用的功能组件</h4><p>通过 <code>Vue</code> 提供的静态方法 <code>component</code> 窗口可复用的功能组件</p>
+<pre><code class="js">let component1 = Vue.component(创建组件所需要的一些配置选项)
+</code></pre>
+<blockquote>
+</blockquote>
+<p>注意事项:<br>[React中区分原生元素和自定义组件，原生：div(小写)，自定义组件Div(首字母必须大写)<br>Vue中，必须小写。<br>Vue：注册时：驼峰MyComponent。使用：my-component。Vue在遇到的时候也会自动解析成驼峰式的MyComponent去在注册的组件中寻找。]</p>
+<pre><code class="html">&lt;body&gt;
+
+    &lt;div id=&quot;app&quot;&gt;
+        &lt;h1&gt;这是vue&lt;/h1&gt;
+        &lt;hr /&gt;
+        &lt;my-component&gt;&lt;/my-component&gt;
+        &lt;my-component&gt;&lt;/my-component&gt;
+        &lt;!--注意转换规则:驼峰变串--&gt;
+    &lt;/div&gt;
+
+    &lt;script src=&quot;js/vue.js&quot;&gt;&lt;/script&gt;
+
+    &lt;script&gt;
+
+        Vue.component(&#39;MyComponent&#39;, &#123;//注意转换规则:驼峰变串
+            template: `
+                &lt;div&gt;MyComponent&lt;/div&gt;
+            `
+        &#125;);
+
+        let app = new Vue(&#123;
+            el: &#39;#app&#39;
+        &#125;);
+
+    &lt;/script&gt;
+
+&lt;/body&gt;
+</code></pre>
+<blockquote>
+<p>组件配置选项：<a target="_blank" rel="noopener" href="https://cn.vuejs.org/v2/api/">https://cn.vuejs.org/v2/api/</a></p>
+</blockquote>
+<h4 id="组件内容渲染"><a href="#组件内容渲染" class="headerlink" title="组件内容渲染"></a>组件内容渲染</h4><p>渲染一个组件的内容可以通过两种方式来进行</p>
+<ul>
+<li>template 选项</li>
+<li>render 选项（函数）</li>
+</ul>
+<h5 id="template"><a href="#template" class="headerlink" title="template"></a>template</h5><p>type : string</p>
+<p>组件的模板结构（HTML），模板内容会被 vue 进行渲染，生成最终的 HTML 内容，并替换占位（挂载）元素</p>
+<h5 id="el"><a href="#el" class="headerlink" title="el"></a>el</h5><p>type : string | Element</p>
+<p>提供一个在页面上已存在的 DOM 元素作为 Vue 实例的挂载目标。可以是 CSS 选择器，也可以是一个 HTMLElement 实例，</p>
+<p>该选择只对 new 创建的实例有效<br>如果提供 el ，但是没有提供 template ，则 el 的内容讲作为 template</p>
+<h5 id="render"><a href="#render" class="headerlink" title="render"></a>render</h5><p>type : (createElement: () =&gt; VNode) =&gt; VNode</p>
+<p>发挥 JavaScript 最大的编程能力，直接创建 VNode （虚拟dom对象），优先级高于 el 和 template</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://cn.vuejs.org/v2/guide/render-function.html">https://cn.vuejs.org/v2/guide/render-function.html</a></p>
+</blockquote>
+<pre><code class="js">         /**
+         * vue:  template -&gt; vNode -&gt; HTML
+         * react:   JSX -&gt; VDOM -&gt; HTML
+         */
+        let app = new Vue(&#123;
+            el: &#39;#app&#39;, // 挂载点不能是html、body元素
+            template: `&lt;div&gt;开课吧&lt;/div&gt;`,
+            render(createElement) &#123;
+                // render优先级高于其他视图处理
+                // return `&lt;div&gt;开课吧&lt;/div&gt;`;
+
+                let vNode = createElement(
+                    &#39;div&#39;,
+                    &#39;开课吧123&#39;
+                );
+                // console.log(vNode);
+
+                /**
+                 * vNode 类似原生中的 元素对象
+                 */
+                // let div = document.createElement(&#39;div&#39;);
+                // let text = document.createTextNode(&#39;开课吧&#39;);
+                // div.appendChild(text);
+                // console.dir(div);
+
+                return vNode;
+
+            &#125;
+        &#125;);
+</code></pre>
+<h3 id="使用-mount-方法延迟-Vue-实例的挂载"><a href="#使用-mount-方法延迟-Vue-实例的挂载" class="headerlink" title="使用 $mount 方法延迟 Vue 实例的挂载"></a>使用 $mount 方法延迟 Vue 实例的挂载</h3><p>当 Vue 实例没有 el 选项的时候，它会处于一种 未挂载 的状态，我们可以通过组件 Vue 实例对象的 $mount 方法来手动挂载，通过该方式，我们也可以达到延迟 Vue 实例的挂载的目的</p>
+<h3 id="渲染的3个注意事项"><a href="#渲染的3个注意事项" class="headerlink" title="渲染的3个注意事项"></a>渲染的3个注意事项</h3><pre><code class="js">        /**
+         *  // 挂载点不能是html、body元素
+         */
+        let app = new Vue(&#123;
+            el: &#39;body&#39;,
+            template: `&lt;div&gt;开课吧&lt;/div&gt;`
+        &#125;);
+
+        /**
+         * 每一个组件有且只能有一个顶级元素
+         */
+        let app = new Vue(&#123;
+            el: &#39;#app&#39;,
+            template: `&lt;div&gt;开课吧&lt;/div&gt;&lt;div&gt;开课吧&lt;/div&gt;`
+        &#125;);
+
+        /**
+         * 如果一个组件没有template也没有render，那么el（挂载点）的outerHTML就作为模板
+         */
+        let app = new Vue(&#123;
+            el: &#39;#app&#39;
+        &#125;);
+</code></pre>
+<h3 id="组件中的数据（状态）"><a href="#组件中的数据（状态）" class="headerlink" title="组件中的数据（状态）"></a>组件中的数据（状态）</h3><p>data<br>组件内部使用的数据，data 是一个对象，data 中的值可以中模板中直接访问</p>
+<h3 id="Vue-实例组件（根组件）的-data-是一个对象"><a href="#Vue-实例组件（根组件）的-data-是一个对象" class="headerlink" title="Vue 实例组件（根组件）的 data 是一个对象"></a>Vue 实例组件（根组件）的 data 是一个对象</h3><p>可复用功能组件的 data 必须是一个函数，且该函数必须返回一个对象（因为复用性，避免多个组件实例引用同一个对象。换句话说，组件中使用的数据必须是一个对象，但是可复用组件的这个数据对象必须通过函数返回</p>
+<h4 id="data-的访问"><a href="#data-的访问" class="headerlink" title="data 的访问"></a>data 的访问</h4><p>data 数据可以直接通过组件实例对象访问，也可以通过实例对象下的 <code>$data</code> 属性进行访问</p>
+<p>组件实例对象下有很多的以 $ 开头的属性，这些都是实例对象内置的一些属性和方法，vue 为了区分数据与内置属性方法，内置的属性和方法默认都是以 <code>$</code> 开始的，所以我们中数据中应该避免使用 <code>$</code> 开头的数据</p>
+<h3 id="模板语法"><a href="#模板语法" class="headerlink" title="模板语法"></a>模板语法</h3><p>vue 使用了基于 html 的模板语法，使用声明式的方式把实例中的数据（data）与 DOM 进行绑定，data 中的数据在模板中可以直接使用</p>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/posts/8ee4616d.html" title="Joe的外挂标签使用文档"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">上一页: Joe的外挂标签使用文档</span></a><a class="button is-default" href="/posts/2fc621c4.html" title="Vue.JS基础的详讲( MVVN )"><span class="has-text-weight-semibold">下一页: Vue.JS基础的详讲( MVVN )</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>

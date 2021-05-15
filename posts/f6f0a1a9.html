@@ -1,0 +1,311 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>live2d-web</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="
+转载于
+  隔壁Yun主题的猫九。
+
+萌萌哒的看板娘，以下资源来源于互联网，最底下会给出相关链接，[github示例](https://github.com/jianchengwang/live2d_models)
+
+
+
+
+使用方法  mocHexo# 进入hexo根目录
+cd hexo-dir
+# 安装hexo-helper-live2d
+npm install --save hexo-helper-live2d
+# 创建目录live2d_models
+mkdir live2d_models
+# 把模型文件放进创建目录live2d_models，比如我这边下载的是index模型
+cd live2d_models &amp;amp;&amp;amp; wget index 
+#重命名模型文件中的json文件，比如我下载的.."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">live2d-web</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">点击返回顶部</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-moc"><span class="toc-text">使用方法  moc</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Hexo"><span class="toc-text">Hexo</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Typecho"><span class="toc-text">Typecho</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EmLog"><span class="toc-text">EmLog</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%B9%B3%E5%8F%B0"><span class="toc-text">其他平台</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-moc3"><span class="toc-text">使用方法 moc3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E9%A2%84%E8%A7%88"><span class="toc-text">模型预览</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A2%A6%E8%B1%A1%E7%BD%91%E7%AB%99%E8%B5%84%E6%BA%90-moc"><span class="toc-text">梦象网站资源 moc</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%8C%B5%E8%92%82%E5%85%8B%E4%B8%9D-index"><span class="toc-text">茵蒂克丝 index</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B0%A4%E8%8E%89-youri"><span class="toc-text">尤莉 youri</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%9B%AA%E6%9C%AA%E6%9D%A5-snow-miku"><span class="toc-text">雪未来 snow_miku</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%89%E9%A3%8E%E9%9D%92%E5%8F%B6-aoba"><span class="toc-text">凉风青叶 aoba</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E4%B8%AD%E7%9A%84%E8%A1%80%E5%B0%8F%E6%9D%BF-platelet"><span class="toc-text">工作中的血小板 platelet</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B9%B2%E7%89%A9%E5%A6%B9%E5%B0%8F%E5%9F%8B-umaru"><span class="toc-text">干物妹小埋 umaru</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%92%8C%E6%B3%89%E7%BA%B1%E9%9B%BE-sagiri"><span class="toc-text">和泉纱雾 sagiri</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BA%B7%E5%A8%9C-kanna"><span class="toc-text">康娜 kanna</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%97%B6%E5%B4%8E%E7%8B%82%E4%B8%89-kurumi"><span class="toc-text">时崎狂三 kurumi</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%9B%B7%E5%A7%86-rem"><span class="toc-text">雷姆 rem</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%A6%99%E9%A3%8E%E6%99%BA%E4%B9%83-chino"><span class="toc-text">香风智乃 chino</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%B9%BF%E7%9B%AE%E5%9C%86-madoka"><span class="toc-text">鹿目圆 madoka</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#22-%E5%A8%98%E5%85%A8%E8%BA%AB%E7%89%88"><span class="toc-text">22 娘全身版</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B6%85%E6%99%AE%E8%BF%AA%E5%8A%AA-neptune"><span class="toc-text">涅普迪努 neptune</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Eikanya%E6%8F%90%E5%8F%96-moc3"><span class="toc-text">Eikanya提取 moc3</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#yichui-2"><span class="toc-text">yichui_2</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#dujiaoshou-6"><span class="toc-text">dujiaoshou_6</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E6%9D%A5%E6%BA%90"><span class="toc-text">资源来源</span></a></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/live2d"><i class="tag post-item-tag">live2d</i></a></header><h1 class="mt-0 mb-1 is-family-serif" id="postTitle">live2d-web</h1><time class="has-text-grey" datetime="2021-05-14T12:31:57.935Z">2021-05-14</time><article class="mt-2 post-content"><p><img src="https://upimage.alexhchu.com/2020/11/22/0eb5ad431e18f.jpg" alt="$cover"></p>
+<div class="snote quote"><p class='p subtitle'>转载于</p>
+  隔壁Yun主题的猫九。
+</div>
+萌萌哒的看板娘，以下资源来源于互联网，最底下会给出相关链接，[github示例](https://github.com/jianchengwang/live2d_models)
+
+<span id="more"></span>
+
+<hr>
+<h3 id="使用方法-moc"><a href="#使用方法-moc" class="headerlink" title="使用方法  moc"></a>使用方法  moc</h3><h4 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h4><pre><code class="shell"># 进入hexo根目录
+cd hexo-dir
+# 安装hexo-helper-live2d
+npm install --save hexo-helper-live2d
+# 创建目录live2d_models
+mkdir live2d_models
+# 把模型文件放进创建目录live2d_models，比如我这边下载的是index模型
+cd live2d_models &amp;&amp; wget index 
+#重命名模型文件中的json文件，比如我下载的模型是index，所以model.json -&gt; index.model.json
+cd index 
+mv model.json index.model.json
+# 修改配置文件
+vim hexo-dir/_config.yml 
+live2d:
+   enable: true # 是否开启live2d
+   scriptFrom: local # 脚本从本地引入
+   pluginRootPath: live2dw/ # 插件在站点上的根目录(相对路径)
+   pluginJsPath: lib/ # 脚本文件相对与插件根目录路径
+   pluginModelPath: assets/ # 模型文件相对与插件根目录路径
+   tagMode: false # 标签模式, 是否仅替换 live2d tag标签而非插入到所有页面中
+   debug: false # 调试, 是否在控制台输出日志
+   model:
+       use: index # 填写放进live2d_models文件夹中的模型文件夹名字
+       scale: 1 # canvas 模型与canvas的缩放
+   display:
+       width: 150 # 宽度
+       height: 300 # 高度
+       position: left # 显示位置
+       hOffset: 0 #水平偏移
+       vOffset: -20 #垂直偏移
+   mobile:
+       show: true # 手机端是否显示
+       scale: 0.5 # 移动设备上的缩放
+</code></pre>
+<h4 id="Typecho"><a href="#Typecho" class="headerlink" title="Typecho"></a>Typecho</h4><p>下载<a target="_blank" rel="noopener" href="https://github.com/Dreamer-Paul/Pio">保罗的看板娘插件</a>，并上传到你的插件目录（一般为 <code>usr/plugins</code>）。进入你的网站后台，在顶部的“控制台”下找到“插件” -&gt; Pio -&gt; 启用。启用之后我们就可以开始设置啦！</p>
+<p><strong>引用模型</strong></p>
+<p>插件默认提供两种方式引用模型，一个是读取插件指定目录下的模型，还有一个是另外引用。对于新手，我们比较推荐放在插件目录的 <code>model</code> 文件夹下。只要你在本站下载模型，都已经为这个插件专门做过一定的优化处理啦。</p>
+<p><strong>显示不全？</strong></p>
+<p>待我们放好模型之后可能会发现，模型显示不太齐全。这是由于高宽度设置不正确导致的~ 由于插件默认的模型是 <code>Pio</code>，而其他模型的比例和它不同，所以我们就需要在插件目录下手动设置它的宽度和高度啦！这样我们的模型就能正常显示出来了！</p>
+<p><strong>遮住内容？</strong></p>
+<p>如果你用的主题默认在左侧有侧边栏，发现模型遮住了菜单，那么我们就可以在插件设置里面修改它的位置，这样就可以遮住你的内容啦！</p>
+<p>更多介绍详见：<a target="_blank" rel="noopener" href="https://paugram.com/coding/add-poster-girl-with-plugin.html">给你的博客增加动态看板娘</a></p>
+<h4 id="EmLog"><a href="#EmLog" class="headerlink" title="EmLog"></a>EmLog</h4><p>详见广树的文章 - <a target="_blank" rel="noopener" href="https://www.wikimoe.com/?post=76">博客通用版 Live2D 伊斯特瓦尔发布</a></p>
+<h4 id="其他平台"><a href="#其他平台" class="headerlink" title="其他平台"></a>其他平台</h4><p>其他平台可以通过修改插件或是修改模板的方式引用看板娘。这里的方法适用于 WordPress、EMLog、Z-Blog 甚至是静态网站。</p>
+<blockquote>
+<p>保罗的 <a target="_blank" rel="noopener" href="https://docs.paul.ren/pio">插件文档</a> 里已经提供了完整的独立版使用教程，你可以在不使用插件的情况下正常食用看板娘。以下方法仅简单引用了看板娘，但并不包含交互功能。</p>
+</blockquote>
+<p>下载 <a target="_blank" rel="noopener" href="https://github.com/journey-ad/live2d_src">来自玩水大佬的封装</a> 项目，我们会在 <code>src/lib</code> 目录下得到一个 <code>live2d.min.js</code> 。这个就是核心啦！</p>
+<p>然后在你的网页上添加一个 <code>canvas</code> 画布，一般放在 <code>footer.php</code> 即页尾文件里面。一般写成这样：</p>
+<pre><code>&lt;canvas id=&quot;paul&quot; width=&quot;280&quot; height=&quot;250&quot;&gt;&lt;/canvas&gt;
+</code></pre>
+<p>其中 <code>id</code> 部分负责让脚本获得画布的位置，<code>width</code> 和 <code>height</code> 分别是宽度和高度，在这里设置你的模型宽高。</p>
+<p>然后我们就需要引用这个 JS 文件啦！方法也很简单，你把这个文件放在合适的位置，或是用 CDN 引用皆可。</p>
+<pre><code>&lt;script src=&quot;live2d.min.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<blockquote>
+<p>注意：要确认画布放在 <code>&lt;script&gt;</code> 的前面！</p>
+</blockquote>
+<p>接着我们再通过一段简单的代码来开始引用我们的模型：</p>
+<pre><code>&lt;script&gt;loadlive2d(&#39;paul&#39;, &#39;模型路径/model.json&#39;);&lt;/script&gt;
+</code></pre>
+<p>这样我们的网站上，就显示出自己的看板娘啦！</p>
+<p>细心的你肯定会发现，看板娘被放在了正常的位置显示了出来，而不是 “悬挂” 在页面的某个位置。我们通过添加一段简单的 CSS 就可以做到了！</p>
+<pre><code>#paul&#123;
+    left: 0;
+    bottom: 0;
+    z-index: 520; /* 如果模型被遮住可以把它改的更大 */
+    position: fixed;
+    pointer-events: none; /* 防止遮住鼠标点击页面其他内容 */
+&#125;
+</code></pre>
+<p>于是我们网站上就有了自己的看板娘啦！</p>
+<hr>
+<h3 id="使用方法-moc3"><a href="#使用方法-moc3" class="headerlink" title="使用方法 moc3"></a>使用方法 moc3</h3><p>参考</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/HCLonely/Live2dV3">https://github.com/HCLonely/Live2dV3</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Yukariin/AzurLaneL2DViewer">https://github.com/Yukariin/AzurLaneL2DViewer</a></p>
+<pre><code class="html">&lt;!------ 位置可自定义 ------&gt;
+&lt;div class=&quot;Canvas&quot; style=&quot;position: fixed; right: 10px; bottom: 10px;z-index: 99999999&quot; id=&quot;L2dCanvas&quot;&gt;&lt;/div&gt;
+
+&lt;!-- Pollyfill script --&gt;
+&lt;script src=&quot;https://unpkg.com/core-js-bundle@3.6.1/minified.js&quot;&gt;&lt;/script&gt;
+&lt;!-- Live2DCubismCore script --&gt;
+&lt;script src = &quot;https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js&quot;&gt;&lt;/script&gt;
+&lt;!-- Build script --&gt;
+&lt;script src = &quot;./assets/js/live2dv3.js&quot;&gt;&lt;/script&gt;
+
+&lt;!------ 加载Live2d模型 | Load Live2d model ------&gt;
+&lt;script&gt;
+    var l2dv;
+  window.onload = () =&gt; &#123;
+    l2dv = new L2dViewer(&#123;
+        el: document.getElementById(&#39;L2dCanvas&#39;),
+        modelHomePath: &#39;./assets/model/moc3/&#39;,
+        // modelHomePath: &#39;https://cdn.jsdelivr.net/gh/alg-wiki/AzurLaneL2DViewer@gh-pages/assets/&#39;,
+        model: &#39;yichui_2&#39;,
+        // bgImg: &#39;https://cdn.jsdelivr.net/gh/alg-wiki/AzurLaneL2DViewer@gh-pages/assets/bg/bg_church_jp.png&#39;,
+        bgImg: &#39;./assets/image/bg/bg_1.png&#39;,
+        width: 500,
+        height: 300,
+        autoMotion: false,
+        _finishedLoadModel: function() &#123;
+          var motionDiv = document.getElementById(&quot;motionDiv&quot;); 
+          motionDiv.innerHTML = &quot;&quot;;
+          l2dv.getMotions().forEach((v,k) =&gt; &#123;
+            let motionName = k;
+            if(motionName.startsWith(&#39;motions/&#39;)) &#123;
+              motionName = motionName.replace(&#39;motions/&#39;, &#39;&#39;);
+            &#125;
+            motionName = motionName.replace(&#39;.motion3.json&#39;, &#39;&#39;);
+            var bt = document.createElement(&quot;button&quot;);
+            bt.innerHTML = motionName; 
+            bt.classList.add(&#39;btnGenericText&#39;);
+            bt.onclick = function () &#123;                          //绑定点击事件
+              l2dv.startMotion(k);
+            &#125;;
+            motionDiv.appendChild(bt);
+          &#125;)
+        &#125;,
+        _onTap: function() &#123;
+            // 点击canvas触发事件
+        &#125;
+    &#125;);
+  &#125;
+&lt;/script&gt;
+</code></pre>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">参数</th>
+<th align="center">类型</th>
+<th align="center">描述</th>
+<th align="center">默认</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>el</code></td>
+<td align="center">[必需] DOM 对象或 jQuery 对象</td>
+<td align="center">要挂载Live2d模型的元素, 支持DOM选择器和jQuery选择器，例：<code>document.getElementById(&#39;L2dCanvas&#39;)</code>或<code>document.querySelector(&#39;#L2dCanvas&#39;)</code>或<code>$(&#39;#L2dCanvas&#39;)</code></td>
+<td align="center"><code>null</code></td>
+</tr>
+<tr>
+<td align="center"><code>modelHomePath</code></td>
+<td align="center">[必需] String</td>
+<td align="center">模型根目录</td>
+<td align="center">null</td>
+</tr>
+<tr>
+<td align="center"><code>model</code></td>
+<td align="center">[必需] String</td>
+<td align="center">初始显示模型</td>
+<td align="center">null</td>
+</tr>
+<tr>
+<td align="center"><code>bgImg</code></td>
+<td align="center">[可选] String</td>
+<td align="center">Canvas背景图片，有图片的话，Canvas的宽高会等于背景图片宽高</td>
+<td align="center">null</td>
+</tr>
+<tr>
+<td align="center"><code>width</code></td>
+<td align="center">[可选] Number</td>
+<td align="center">Canvas宽度，单位: <code>px</code></td>
+<td align="center">500</td>
+</tr>
+<tr>
+<td align="center"><code>height</code></td>
+<td align="center">[可选] Number</td>
+<td align="center">Canvas高度，单位: <code>px</code></td>
+<td align="center">00</td>
+</tr>
+<tr>
+<td align="center"><code>autoMotion</code></td>
+<td align="center">[可选] Boolean</td>
+<td align="center">是否自动随机触发Motion                    true</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">_finishedLoadModel</td>
+<td align="center">[可选] Function</td>
+<td align="center">模型加载完回调函数                      null</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"><code>_onTap</code></td>
+<td align="center">[可选] Function</td>
+<td align="center">点击模型触发函数，为空的话会默认触发随机Motion        null</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<hr>
+<pre><code class="js">// L2dViewer 对外暴露的方法
+// 获取模型信息
+public getModel(): LAppModel &#123;
+&#125;
+// 加载模型
+public loadModel(modelName: string) &#123;
+&#125;
+// 触发模型 motion
+public startMotion(motionName: string) &#123;
+&#125;
+// 获取模型 motion
+public getMotions(): Map&lt;any,any&gt; &#123;
+&#125;
+// 设置模型背景
+public setBgImg(bgImg: string) &#123;
+&#125;
+</code></pre>
+<hr>
+<p>当然，你感兴趣的话，并且有一定的前端基础，建议自己构建 <strong>live2dv3.js</strong>，可以下载官方提供的<a target="_blank" rel="noopener" href="https://www.live2d.com/download/cubism-sdk/">Live2d Web Sdk</a>，里面已经包含一个简单示例了，</p>
+<p><strong>lappdefine.ts</strong>  定义基本的参数<br><strong>lappdelegate.ts</strong> 初始化,释放资源,事件绑定<br><strong>lapplive2dmanager.ts</strong> 模型的管理类,进行模型生成和废弃,事件的处理,模型切换.<br><strong>lappmodel.ts</strong> 模型类,定义模型的基本属性<br><strong>lappal.ts</strong> 读取文件,抽象文件数据(算是工具类)<br><strong>lappsprite.ts</strong> 动画精灵类,(有h5游戏开发应该了解)<br><strong>lapptexturemanager.ts</strong> 纹理管理类,进行图像读取和管理的类<br><strong>lappview.ts</strong> 视图类,生成模型的图像被lapplive2dmanager管理<br><strong>main.ts</strong> 主程序启动程序<br><strong>touchmanager.ts</strong> 事件的管理类(比如移动鼠标,点击鼠标,触摸屏触碰等)</p>
+<p>简单修改下就可以了，也可以参照我的<a target="_blank" rel="noopener" href="https://github.com/jianchengwang/todo-web/raw/master/live2d-web">demo代码</a></p>
+<h3 id="模型预览"><a href="#模型预览" class="headerlink" title="模型预览"></a>模型预览</h3><h4 id="梦象网站资源-moc"><a href="#梦象网站资源-moc" class="headerlink" title="梦象网站资源 moc"></a>梦象网站资源 moc</h4><h5 id="茵蒂克丝-index"><a href="#茵蒂克丝-index" class="headerlink" title="茵蒂克丝 index"></a>茵蒂克丝 index</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/index.jpg"></p>
+<p>动漫《魔法禁书目录》中女主角。有着银色的长发、绿色的眼瞳、雪白的肌肤，年龄约十四五岁，却有着可爱的幼儿体型。</p>
+<p>模型作者：未知<br>模型出处：网络搜集</p>
+<hr>
+<h5 id="尤莉-youri"><a href="#尤莉-youri" class="headerlink" title="尤莉 youri"></a>尤莉 youri</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/youri.jpg"></p>
+<p>尤莉是由 つくみず 创作的漫画《少女终末旅行》及其衍生作品中的登场角色。性格极度乐观，非常喜欢吃东西。</p>
+<p>模型作者：罐装猫粮君<br>模型出处：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av17779694">【Live2D工房】Vol.1 Part2 尤 脸扁再来一份 《少女终末旅行》</a></p>
+<hr>
+<h5 id="雪未来-snow-miku"><a href="#雪未来-snow-miku" class="headerlink" title="雪未来 snow_miku"></a>雪未来 snow_miku</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/snow_miku.jpg"></p>
+<p>雪未来是 Crypton 旗下虚拟歌手初音未来的二次创作系列造型，民间有时称其为 “雪初音” 或 “雪 MIKU”。自 2010 年被确立为日本北海道札幌冰雪节的应援角色。自 2012 年起，每年会以网络征集投票的形式决定新的雪未来人物形象。</p>
+<p>模型作者：未知<br>模型出处：网络搜集</p>
+<p>推荐设置：</p>
+<p>宽度：300<br>高度：300</p>
+<hr>
+<h5 id="凉风青叶-aoba"><a href="#凉风青叶-aoba" class="headerlink" title="凉风青叶 aoba"></a>凉风青叶 aoba</h5><h5 id=""><a href="#" class="headerlink" title=""></a><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/aoba.jpg"></h5><p>来自 New Game! 的凉风青叶和你见面啦！</p>
+<p>推荐设置：</p>
+<p>高度：250<br>宽度：200</p>
+<hr>
+<h5 id="工作中的血小板-platelet"><a href="#工作中的血小板-platelet" class="headerlink" title="工作中的血小板 platelet"></a>工作中的血小板 platelet</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/platelet.jpg"></p>
+<p>模型作者：Neko_KK<br>模型出处：Live2DViewer 创意工坊</p>
+<hr>
+<h5 id="干物妹小埋-umaru"><a href="#干物妹小埋-umaru" class="headerlink" title="干物妹小埋 umaru"></a>干物妹小埋 umaru</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/umaru.jpg"></p>
+<p>模型作者：未知<br>模型出处：未知</p>
+<p>推荐设置：</p>
+<p>高度：300<br>宽度：100</p>
+<h5 id="和泉纱雾-sagiri"><a href="#和泉纱雾-sagiri" class="headerlink" title="和泉纱雾 sagiri"></a>和泉纱雾 sagiri</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/sagiri.jpg"></p>
+<p>模型作者：oukaitou<br>模型出处：Live2DViewer 创意工坊</p>
+<p>推荐设置：</p>
+<p>高度：500<br>宽度：默认</p>
+<h5 id="康娜-kanna"><a href="#康娜-kanna" class="headerlink" title="康娜 kanna"></a>康娜 kanna</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/kanna.jpg"></p>
+<p>模型作者：oukaitou<br>模型出处：Live2DViewer 创意工坊</p>
+<hr>
+<h5 id="时崎狂三-kurumi"><a href="#时崎狂三-kurumi" class="headerlink" title="时崎狂三 kurumi"></a>时崎狂三 kurumi</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/kurumi.jpg"></p>
+<p>模型作者：未知<br>模型出处：约会大作战手游官网</p>
+<hr>
+<h5 id="雷姆-rem"><a href="#雷姆-rem" class="headerlink" title="雷姆 rem"></a>雷姆 rem</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/rem.jpg"></p>
+<p>提取自 <a target="_blank" rel="noopener" href="https://github.com/eeg1412/Live2dRem">广树的项目</a>。</p>
+<p>推荐设置：</p>
+<p>高度：275<br>宽度：230</p>
+<p>高度：335<br>宽度：280</p>
+<hr>
+<h5 id="香风智乃-chino"><a href="#香风智乃-chino" class="headerlink" title="香风智乃 chino"></a>香风智乃 chino</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/chino.jpg"></p>
+<p>香风智乃，漫画《请问您今天要来点兔子吗？》中及其衍生作品中女主角之一。咖啡店 Rabbit House 老板的孙女，13 岁的初中生。身形娇小却意外地能干，店内杂务也几乎由她一手包办，个性冷静又沉默寡言，但其实是在人际交往上有点笨拙。</p>
+<p>模型作者：Hernes_VR<br>模型出处：FaceRig 创意工坊</p>
+<hr>
+<h5 id="鹿目圆-madoka"><a href="#鹿目圆-madoka" class="headerlink" title="鹿目圆 madoka"></a>鹿目圆 madoka</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/madoka.jpg"></p>
+<p>鹿目圆是原创动画《魔法少女小圆》及其衍生作品中主角。就读于市立见泷原中学二年级的一位普通初中生。个头小巧可爱，性格温柔且为朋友着想。因为本身的潜质，而成为魔法少女。后成为神，消失在世界上。</p>
+<p>模型作者：未知<br>模型出处：网络搜集</p>
+<p>推荐设置：</p>
+<p>高度：300<br>宽度：230</p>
+<hr>
+<h5 id="22-娘全身版"><a href="#22-娘全身版" class="headerlink" title="22 娘全身版"></a>22 娘全身版</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/22.jpg"></p>
+<p>22 娘是娱乐向弹幕视频站点 Bilibili 的吉祥物。阳光元气娘，火拼有精神。对人热情、热心，但有些冒失。</p>
+<p>模型作者：未知<br>模型出处：网络搜集</p>
+<p>推荐设置：</p>
+<p>高度：400<br>宽度：150</p>
+<hr>
+<h5 id="涅普迪努-neptune"><a href="#涅普迪努-neptune" class="headerlink" title="涅普迪努 neptune"></a>涅普迪努 neptune</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/neptune.jpg"></p>
+<p>涅普迪努，又称 “涅普顿”。是《超次元游戏：海王星》等海王星系列游戏中紫色大陆 Planeptune 的守护女神。性格乐天、天真浪漫，很擅长调节气氛。有时会从女神的工作中翘班，经常懒懒的，但因为天生的性格原因，仍然受到周围人的欢迎。</p>
+<p>模型作者：未知<br>模型出处：网络搜集</p>
+<hr>
+<h4 id="Eikanya提取-moc3"><a href="#Eikanya提取-moc3" class="headerlink" title="Eikanya提取 moc3"></a>Eikanya提取 moc3</h4><p>这个大佬提取了很多，所以这里只列出我喜欢的部分模型，<a target="_blank" rel="noopener" href="https://jianchengwang.github.io/live2d_models/">在线预览</a></p>
+<h5 id="yichui-2"><a href="#yichui-2" class="headerlink" title="yichui_2"></a>yichui_2</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/yichui_2.jpg"></p>
+<hr>
+<h5 id="dujiaoshou-6"><a href="#dujiaoshou-6" class="headerlink" title="dujiaoshou_6"></a>dujiaoshou_6</h5><p><img src="https://github.com/jianchengwang/live2d_models/raw/main/_model_images/dujiaoshou_6.jpg"></p>
+<hr>
+<h3 id="资源来源"><a href="#资源来源" class="headerlink" title="资源来源"></a>资源来源</h3><p><a target="_blank" rel="noopener" href="https://www.live2d.com/zh-CHS/">Live2d官网</a></p>
+<p><a target="_blank" rel="noopener" href="https://mx.paugram.com/">梦象 Live2D 模型站</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Eikanya/Live2d-model">Eikanya/Live2d-model</a></p>
+<p><a target="_blank" rel="noopener" href="https://l2d.alg-wiki.com/">Azur Lane Live2D Viewer</a></p>
+<p><a target="_blank" rel="noopener" href="https://minhaskamal.github.io/DownGit/#/home">DownGit</a></p>
+<Vssue  /></article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/posts/853e67f7.html" title="物种起源（全英文）"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">上一页: 物种起源（全英文）</span></a><a class="button is-default" href="/posts/853e67f2.html" title="如何反黑客后门程序"><span class="has-text-weight-semibold">下一页: 如何反黑客后门程序</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>

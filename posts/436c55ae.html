@@ -1,0 +1,390 @@
+<!DOCTYPE html><html class="appearance-auto" lang="zh-CN"><head><meta charset="UTF-8"><title>浅谈前端中的二进制数据类型</title><meta name="description" content="私のすべてを支配してください"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="https://upimage.alexhchu.com/2021/04/28/5a7401f88c1cf.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="
+目前在一个项目中，WebSocket部分由于后端使用了gzip压缩，前端处理起来废了一点时间，从而发现自己在二进制数据类型这个知识点还存在一定的盲区，因此这里进行总结。
+
+本文主要简单介绍ArrayBuffer对象、TypedArray对象、DataView对象以及Blob原始数据类型，和它们之间的互相转换方法。部分代码参考这里而非本人原创，仅做个人学习使用。
+这些类型化对象，一般会在以下场景中使用：
+
+WebGL 中，浏览器和显卡之间需要使用二进制数据进行通信。
+在一些 Rest 接口或者 WebSocket 中，采用压缩过的数据进行通信，这个压缩和解压缩的过程可能需要借助二进制对象。
+在 Canvas 中，我们可能需要通过生成 Blob 的方式保存当前内容。
+在 Img 等资源文件中，URL 可以为 .."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">AIENS.'s blog</a></h2></section><h3 class="is-hidden-mobile is-family-serif is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">浅谈前端中的二进制数据类型</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">点击返回顶部</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">首页</a></h3><h3 class="is-inline-block"><a href="/about">关于</a></h3><h3 class="is-inline-block"><a href="/archives">归档</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E6%A6%82%E8%BF%B0"><span class="toc-text">二进制数据类型概述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ArrayBuffer"><span class="toc-text">ArrayBuffer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TypedArray"><span class="toc-text">TypedArray</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="toc-text">构造函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#BYTES-PER-ELEMENT%E5%B1%9E%E6%80%A7"><span class="toc-text">BYTES_PER_ELEMENT属性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ArrayBuffer%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E4%BA%92%E7%9B%B8%E8%BD%AC%E6%8D%A2"><span class="toc-text">ArrayBuffer与字符串的互相转换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#TypedArray-prototype-set"><span class="toc-text">TypedArray.prototype.set()</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#TypedArray-prototype-subarray"><span class="toc-text">TypedArray.prototype.subarray()</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#TypedArray-prototype-slice"><span class="toc-text">TypedArray.prototype.slice()</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#TypedArray-of"><span class="toc-text">TypedArray.of()</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#TypedArray-from"><span class="toc-text">TypedArray.from()</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DataView"><span class="toc-text">DataView</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Blob"><span class="toc-text">Blob</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2"><span class="toc-text">数据格式转换</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#String%E8%BD%ACBlob"><span class="toc-text">String转Blob</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TypeArray%E8%BD%ACBlob"><span class="toc-text">TypeArray转Blob</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ArrayBuffer%E8%BD%ACBlob"><span class="toc-text">ArrayBuffer转Blob</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Blob%E8%BD%ACString"><span class="toc-text">Blob转String</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Blob%E8%BD%ACArrayBuffer"><span class="toc-text">Blob转ArrayBuffer</span></a></li></ol></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/javascript"><i class="tag post-item-tag">javascript</i></a></header><h1 class="mt-0 mb-1 is-family-serif" id="postTitle">浅谈前端中的二进制数据类型</h1><time class="has-text-grey" datetime="2018-05-09T02:28:42.000Z">2018-05-09</time><article class="mt-2 post-content"><blockquote>
+<p>目前在一个项目中，WebSocket部分由于后端使用了gzip压缩，前端处理起来废了一点时间，从而发现自己在二进制数据类型这个知识点还存在一定的盲区，因此这里进行总结。</p>
+</blockquote>
+<p>本文主要简单介绍ArrayBuffer对象、TypedArray对象、DataView对象以及Blob原始数据类型，和它们之间的互相转换方法。部分代码参考<a target="_blank" rel="noopener" href="http://javascript.ruanyifeng.com/stdlib/arraybuffer.html#toc4">这里</a>而非本人原创，仅做个人学习使用。</p>
+<p>这些类型化对象，一般会在以下场景中使用：</p>
+<ul>
+<li>WebGL 中，浏览器和显卡之间需要使用二进制数据进行通信。</li>
+<li>在一些 Rest 接口或者 WebSocket 中，采用压缩过的数据进行通信，这个压缩和解压缩的过程可能需要借助二进制对象。</li>
+<li>在 Canvas 中，我们可能需要通过生成 Blob 的方式保存当前内容。</li>
+<li>在 Img 等资源文件中，URL 可以为 Blob 原始数据类型。</li>
+<li>在读取用户上传文件时，可能需要用到二进制数据类型进行中间转换。</li>
+</ul>
+<p>下文分两部分，前一部分概述各个二进制数据类型，后一部分将它们之间的互相转换。</p>
+<h3 id="二进制数据类型概述"><a href="#二进制数据类型概述" class="headerlink" title="二进制数据类型概述"></a>二进制数据类型概述</h3><h4 id="ArrayBuffer"><a href="#ArrayBuffer" class="headerlink" title="ArrayBuffer"></a>ArrayBuffer</h4><p>ArrayBuffer对象代表储存二进制数据的一段内存，它不能直接读写，只能通过视图（TypedArray视图和DataView视图)来读写，视图的作用是以指定格式解读二进制数据。</p>
+<p>ArrayBuffer也是一个构造函数，可以分配一段可以存放数据的连续内存区域。</p>
+<pre><code>var buf = new ArrayBuffer(32);
+</code></pre>
+<p>上面代码生成了一段32字节的内存区域，每个字节的值默认都是0。可以看到，ArrayBuffer构造函数的参数是所需要的内存大小（单位字节）。</p>
+<p>为了读写这段内容，需要为它指定视图。DataView视图的创建，需要提供ArrayBuffer对象实例作为参数。</p>
+<pre><code>var buf = new ArrayBuffer(32);
+var dataView = new DataView(buf);
+dataView.getUint8(0) // 0
+</code></pre>
+<p>上面代码对一段32字节的内存，建立DataView视图，然后以不带符号的8位整数格式，读取第一个元素，结果得到0，因为原始内存的ArrayBuffer对象，默认所有位都是0。</p>
+<p>另外，我们可以将ArrayBuffer生成的结果，传入TypedArray中：</p>
+<pre><code>var buffer = new ArrayBuffer(12);
+
+var x1 = new Int32Array(buffer);
+x1[0] = 1;
+var x2 = new Uint8Array(buffer);
+x2[0]  = 2;
+
+x1[0] // 2
+</code></pre>
+<p>ArrayBuffer实例的byteLength属性，返回所分配的内存区域的字节长度。</p>
+<pre><code>var buffer = new ArrayBuffer(32);
+buffer.byteLength
+// 32
+</code></pre>
+<p>如果要分配的内存区域很大，有可能分配失败（因为没有那么多的连续空余内存），所以有必要检查是否分配成功。</p>
+<pre><code>if (buffer.byteLength === n) &#123;
+  // 成功
+&#125; else &#123;
+  // 失败
+&#125;
+</code></pre>
+<p>ArrayBuffer实例有一个slice方法，允许将内存区域的一部分，拷贝生成一个新的ArrayBuffer对象。</p>
+<pre><code>var buffer = new ArrayBuffer(8);
+var newBuffer = buffer.slice(0, 3);
+</code></pre>
+<p>上面代码拷贝buffer对象的前3个字节（从0开始，到第3个字节前面结束），生成一个新的ArrayBuffer对象。slice方法其实包含两步，第一步是先分配一段新内存，第二步是将原来那个ArrayBuffer对象拷贝过去。</p>
+<p>slice方法接受两个参数，第一个参数表示拷贝开始的字节序号（含该字节），第二个参数表示拷贝截止的字节序号（不含该字节）。如果省略第二个参数，则默认到原ArrayBuffer对象的结尾。</p>
+<p>除了slice方法，ArrayBuffer对象不提供任何直接读写内存的方法，只允许在其上方建立视图，然后通过视图读写。</p>
+<p>ArrayBuffer有一个静态方法isView，返回一个布尔值，表示参数是否为ArrayBuffer的视图实例。这个方法大致相当于判断参数，是否为TypedArray实例或DataView实例。</p>
+<pre><code>var buffer = new ArrayBuffer(8);
+ArrayBuffer.isView(buffer) // false
+
+var v = new Int32Array(buffer);
+ArrayBuffer.isView(v) // true
+</code></pre>
+<h4 id="TypedArray"><a href="#TypedArray" class="headerlink" title="TypedArray"></a>TypedArray</h4><p>目前，TypedArray对象一共提供9种类型的视图，每一种视图都是一种构造函数。</p>
+<ul>
+<li>Int8Array：8位有符号整数，长度1个字节。</li>
+<li>Uint8Array：8位无符号整数，长度1个字节。</li>
+<li>Uint8ClampedArray：8位无符号整数，长度1个字节，溢出处理不同。</li>
+<li>Int16Array：16位有符号整数，长度2个字节。</li>
+<li>Uint16Array：16位无符号整数，长度2个字节。</li>
+<li>Int32Array：32位有符号整数，长度4个字节。</li>
+<li>Uint32Array：32位无符号整数，长度4个字节。</li>
+<li>Float32Array：32位浮点数，长度4个字节。</li>
+<li>Float64Array：64位浮点数，长度8个字节。</li>
+</ul>
+<p>这9个构造函数生成的对象，统称为TypedArray对象。它们很像正常数组，都有length属性，都能用方括号运算符（[]）获取单个元素，所有数组的方法，在类型化数组上面都能使用。两者的差异主要在以下方面。</p>
+<ul>
+<li>TypedArray数组的所有成员，都是同一种类型和格式。</li>
+<li>TypedArray数组的成员是连续的，不会有空位。</li>
+<li>Typed化数组成员的默认值为0。比如，new Array(10)返回一个正常数组，里面没有任何成员，只是10个空位；new Uint8Array(10)返回一个类型化数组，里面10个成员都是0。</li>
+<li>TypedArray数组只是一层视图，本身不储存数据，它的数据都储存在底层的ArrayBuffer对象之中，要获取底层对象必须使用buffer属性。</li>
+</ul>
+<h5 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h5><p>TypedArray数组提供9种构造函数，用来生成相应类型的数组实例。</p>
+<p>构造函数有多种用法。</p>
+<ul>
+<li>TypedArray(buffer, byteOffset=0, length?)</li>
+</ul>
+<p>同一个ArrayBuffer对象之上，可以根据不同的数据类型，建立多个视图。</p>
+<pre><code>// 创建一个8字节的ArrayBuffer
+var b = new ArrayBuffer(8);
+
+// 创建一个指向b的Int32视图，开始于字节0，直到缓冲区的末尾
+var v1 = new Int32Array(b);
+
+// 创建一个指向b的Uint8视图，开始于字节2，直到缓冲区的末尾
+var v2 = new Uint8Array(b, 2);
+
+// 创建一个指向b的Int16视图，开始于字节2，长度为2
+var v3 = new Int16Array(b, 2, 2);
+</code></pre>
+<p>对于以上代码，v1、v2和v3是重叠的：v1[0]是一个32位整数，指向字节0～字节3；v2[0]是一个8位无符号整数，指向字节2；v3[0]是一个16位整数，指向字节2～字节3。只要任何一个视图对内存有所修改，就会在另外两个视图上反应出来。</p>
+<p>注意，byteOffset必须与所要建立的数据类型一致，否则会报错。</p>
+<pre><code>var buffer = new ArrayBuffer(8);
+var i16 = new Int16Array(buffer, 1);
+// Uncaught RangeError: start offset of Int16Array should be a multiple of 2
+</code></pre>
+<p>上面代码中，新生成一个8个字节的ArrayBuffer对象，然后在这个对象的第一个字节，建立带符号的16位整数视图，结果报错。因为，带符号的16位整数需要两个字节，所以byteOffset参数必须能够被2整除。</p>
+<p>如果想从任意字节开始解读ArrayBuffer对象，必须使用DataView视图，因为TypedArray视图只提供9种固定的解读格式。</p>
+<ul>
+<li>TypedArray(length)</li>
+</ul>
+<p>视图还可以不通过ArrayBuffer对象，直接分配内存而生成。</p>
+<pre><code>var f64a = new Float64Array(8);
+f64a[0] = 10;
+f64a[1] = 20;
+f64a[2] = f64a[0] + f64a[1];
+</code></pre>
+<ul>
+<li>TypedArray(typedArray)</li>
+</ul>
+<p>类型化数组的构造函数，可以接受另一个视图实例作为参数。</p>
+<pre><code>var typedArray = new Int8Array(new Uint8Array(4));
+</code></pre>
+<p>上面代码中，Int8Array构造函数接受一个Uint8Array实例作为参数。</p>
+<p>注意，此时生成的新数组，只是复制了参数数组的值，对应的底层内存是不一样的。新数组会开辟一段新的内存储存数据，不会在原数组的内存之上建立视图。</p>
+<pre><code>var x = new Int8Array([1, 1]);
+var y = new Int8Array(x);
+x[0] // 1
+y[0] // 1
+
+x[0] = 2;
+y[0] // 1
+</code></pre>
+<p>上面代码中，数组y是以数组x为模板而生成的，当x变动的时候，y并没有变动。</p>
+<p>如果想基于同一段内存，构造不同的视图，可以采用下面的写法。</p>
+<pre><code>var x = new Int8Array([1, 1]);
+var y = new Int8Array(x.buffer);
+x[0] // 1
+y[0] // 1
+
+x[0] = 2;
+y[0] // 2
+</code></pre>
+<ul>
+<li>TypedArray(arrayLikeObject)</li>
+</ul>
+<p>构造函数的参数也可以是一个普通数组，然后直接生成TypedArray实例。</p>
+<pre><code>var typedArray = new Uint8Array([1, 2, 3, 4]);
+</code></pre>
+<p>注意，这时TypedArray视图会重新开辟内存，不会在原数组的内存上建立视图。</p>
+<p>上面代码从一个普通的数组，生成一个8位无符号整数的TypedArray实例。</p>
+<p>TypedArray数组也可以转换回普通数组。</p>
+<pre><code>var normalArray = Array.prototype.slice.call(typedArray);
+</code></pre>
+<h5 id="BYTES-PER-ELEMENT属性"><a href="#BYTES-PER-ELEMENT属性" class="headerlink" title="BYTES_PER_ELEMENT属性"></a>BYTES_PER_ELEMENT属性</h5><p>每一种视图的构造函数，都有一个BYTES_PER_ELEMENT属性，表示这种数据类型占据的字节数。</p>
+<pre><code>Int8Array.BYTES_PER_ELEMENT // 1
+Uint8Array.BYTES_PER_ELEMENT // 1
+Int16Array.BYTES_PER_ELEMENT // 2
+Uint16Array.BYTES_PER_ELEMENT // 2
+Int32Array.BYTES_PER_ELEMENT // 4
+Uint32Array.BYTES_PER_ELEMENT // 4
+Float32Array.BYTES_PER_ELEMENT // 4
+Float64Array.BYTES_PER_ELEMENT // 8
+</code></pre>
+<h5 id="ArrayBuffer与字符串的互相转换"><a href="#ArrayBuffer与字符串的互相转换" class="headerlink" title="ArrayBuffer与字符串的互相转换"></a>ArrayBuffer与字符串的互相转换</h5><p>ArrayBuffer转为字符串，或者字符串转为ArrayBuffer，有一个前提，即字符串的编码方法是确定的。假定字符串采用UTF-16编码（JavaScript的内部编码方式），可以自己编写转换函数。</p>
+<pre><code>// ArrayBuffer转为字符串，参数为ArrayBuffer对象
+function ab2str(buf) &#123;
+  return String.fromCharCode.apply(null, new Uint16Array(buf));
+&#125;
+
+// 字符串转为ArrayBuffer对象，参数为字符串
+function str2ab(str) &#123;
+  var buf = new ArrayBuffer(str.length * 2); // 每个字符占用2个字节
+  var bufView = new Uint16Array(buf);
+  for (var i = 0, strLen = str.length; i &lt; strLen; i++) &#123;
+    bufView[i] = str.charCodeAt(i);
+  &#125;
+  return buf;
+&#125;
+</code></pre>
+<h5 id="TypedArray-prototype-set"><a href="#TypedArray-prototype-set" class="headerlink" title="TypedArray.prototype.set()"></a>TypedArray.prototype.set()</h5><p>TypedArray数组的set方法用于复制数组（正常数组或TypedArray数组），也就是将一段内容完全复制到另一段内存。</p>
+<pre><code>var a = new Uint8Array(8);
+var b = new Uint8Array(8);
+
+b.set(a);
+</code></pre>
+<p>上面代码复制a数组的内容到b数组，它是整段内存的复制，比一个个拷贝成员的那种复制快得多。set方法还可以接受第二个参数，表示从b对象哪一个成员开始复制a对象。</p>
+<pre><code>var a = new Uint16Array(8);
+var b = new Uint16Array(10);
+
+b.set(a, 2)
+</code></pre>
+<p>上面代码的b数组比a数组多两个成员，所以从b[2]开始复制。</p>
+<h5 id="TypedArray-prototype-subarray"><a href="#TypedArray-prototype-subarray" class="headerlink" title="TypedArray.prototype.subarray()"></a>TypedArray.prototype.subarray()</h5><p>subarray方法是对于TypedArray数组的一部分，再建立一个新的视图。</p>
+<pre><code>var a = new Uint16Array(8);
+var b = a.subarray(2,3);
+
+a.byteLength // 16
+b.byteLength // 2
+</code></pre>
+<p>subarray方法的第一个参数是起始的成员序号，第二个参数是结束的成员序号（不含该成员），如果省略则包含剩余的全部成员。所以，上面代码的a.subarray(2,3)，意味着b只包含a[2]一个成员，字节长度为2。</p>
+<h5 id="TypedArray-prototype-slice"><a href="#TypedArray-prototype-slice" class="headerlink" title="TypedArray.prototype.slice()"></a>TypedArray.prototype.slice()</h5><p>TypeArray实例的slice方法，可以返回一个指定位置的新的TypedArray实例。</p>
+<pre><code>let ui8 = Uint8Array.of(0, 1, 2);
+ui8.slice(-1)
+// Uint8Array [ 2 ]
+</code></pre>
+<p>上面代码中，ui8是8位无符号整数数组视图的一个实例。它的slice方法可以从当前视图之中，返回一个新的视图实例。</p>
+<p>slice方法的参数，表示原数组的具体位置，开始生成新数组。负值表示逆向的位置，即-1为倒数第一个位置，-2表示倒数第二个位置，以此类推。</p>
+<h5 id="TypedArray-of"><a href="#TypedArray-of" class="headerlink" title="TypedArray.of()"></a>TypedArray.of()</h5><p>TypedArray数组的所有构造函数，都有一个静态方法of，用于将参数转为一个TypedArray实例。</p>
+<pre><code>Float32Array.of(0.151, -8, 3.7)
+// Float32Array [ 0.151, -8, 3.7 ]
+</code></pre>
+<h5 id="TypedArray-from"><a href="#TypedArray-from" class="headerlink" title="TypedArray.from()"></a>TypedArray.from()</h5><p>静态方法from接受一个<strong>可遍历的数据结构（比如数组）</strong>作为参数，返回一个基于这个结构的TypedArray实例。</p>
+<pre><code>Uint16Array.from([0, 1, 2])
+// Uint16Array [ 0, 1, 2 ]
+</code></pre>
+<p>这个方法还可以将一种TypedArray实例，转为另一种。</p>
+<pre><code>var ui16 = Uint16Array.from(Uint8Array.of(0, 1, 2));
+ui16 instanceof Uint16Array // true
+</code></pre>
+<p>from方法还可以接受一个函数，作为第二个参数，用来对每个元素进行遍历，功能类似map方法。</p>
+<pre><code>Int8Array.of(127, 126, 125).map(x =&gt; 2 * x)
+// Int8Array [ -2, -4, -6 ]
+
+Int16Array.from(Int8Array.of(127, 126, 125), x =&gt; 2 * x)
+// Int16Array [ 254, 252, 250 ]
+</code></pre>
+<p>上面的例子中，from方法没有发生溢出，这说明遍历是针对新生成的16位整数数组，而不是针对原来的8位整数数组。也就是说，from会将第一个参数指定的TypedArray数组，拷贝到另一段内存之中（占用内存从3字节变为6字节），然后再进行处理。</p>
+<h4 id="DataView"><a href="#DataView" class="headerlink" title="DataView"></a>DataView</h4><p>如果一段数据包括多种类型（比如服务器传来的HTTP数据），这时除了建立ArrayBuffer对象的复合视图以外，还可以通过DataView视图进行操作。</p>
+<p>DataView视图提供更多操作选项，而且支持设定字节序。本来，在设计目的上，ArrayBuffer对象的各种TypedArray视图，是用来向网卡、声卡之类的本机设备传送数据，所以使用本机的字节序就可以了；而DataView视图的设计目的，是用来处理网络设备传来的数据，所以大端字节序或小端字节序是可以自行设定的。</p>
+<p>DataView视图本身也是构造函数，接受一个ArrayBuffer对象作为参数，生成视图。</p>
+<pre><code>DataView(ArrayBuffer buffer [, 字节起始位置 [, 长度]]);
+</code></pre>
+<p>下面是一个例子。</p>
+<pre><code>var buffer = new ArrayBuffer(24);
+var dv = new DataView(buffer);
+</code></pre>
+<p>DataView实例有以下属性，含义与TypedArray实例的同名方法相同。</p>
+<ul>
+<li>DataView.prototype.buffer：返回对应的ArrayBuffer对象</li>
+<li>DataView.prototype.byteLength：返回占据的内存字节长度</li>
+<li>DataView.prototype.byteOffset：返回当前视图从对应的ArrayBuffer对象的哪个字节开始</li>
+</ul>
+<p>DataView实例提供8个方法读取内存。</p>
+<ul>
+<li>getInt8：读取1个字节，返回一个8位整数。</li>
+<li>getUint8：读取1个字节，返回一个无符号的8位整数。</li>
+<li>getInt16：读取2个字节，返回一个16位整数。</li>
+<li>getUint16：读取2个字节，返回一个无符号的16位整数。</li>
+<li>getInt32：读取4个字节，返回一个32位整数。</li>
+<li>getUint32：读取4个字节，返回一个无符号的32位整数。</li>
+<li>getFloat32：读取4个字节，返回一个32位浮点数。</li>
+<li>getFloat64：读取8个字节，返回一个64位浮点数。</li>
+</ul>
+<p>这一系列get方法的参数都是一个字节序号（不能是负数，否则会报错），表示从哪个字节开始读取。</p>
+<pre><code>var buffer = new ArrayBuffer(24);
+var dv = new DataView(buffer);
+
+// 从第1个字节读取一个8位无符号整数
+var v1 = dv.getUint8(0);
+
+// 从第2个字节读取一个16位无符号整数
+var v2 = dv.getUint16(1);
+
+// 从第4个字节读取一个16位无符号整数
+var v3 = dv.getUint16(3);
+</code></pre>
+<p>上面代码读取了ArrayBuffer对象的前5个字节，其中有一个8位整数和两个十六位整数。</p>
+<p>如果一次读取两个或两个以上字节，就必须明确数据的存储方式，到底是小端字节序还是大端字节序。默认情况下，DataView的get方法使用大端字节序解读数据，如果需要使用小端字节序解读，必须在get方法的第二个参数指定true。</p>
+<pre><code>// 小端字节序
+var v1 = dv.getUint16(1, true);
+
+// 大端字节序
+var v2 = dv.getUint16(3, false);
+
+// 大端字节序
+var v3 = dv.getUint16(3);
+</code></pre>
+<p>DataView视图提供8个方法写入内存。</p>
+<ul>
+<li>setInt8：写入1个字节的8位整数。</li>
+<li>setUint8：写入1个字节的8位无符号整数。</li>
+<li>setInt16：写入2个字节的16位整数。</li>
+<li>setUint16：写入2个字节的16位无符号整数。</li>
+<li>setInt32：写入4个字节的32位整数。</li>
+<li>setUint32：写入4个字节的32位无符号整数。</li>
+<li>setFloat32：写入4个字节的32位浮点数。</li>
+<li>setFloat64：写入8个字节的64位浮点数。</li>
+</ul>
+<p>这一系列set方法，接受两个参数，第一个参数是字节序号，表示从哪个字节开始写入，第二个参数为写入的数据。对于那些写入两个或两个以上字节的方法，需要指定第三个参数，false或者undefined表示使用大端字节序写入，true表示使用小端字节序写入。</p>
+<pre><code>// 在第1个字节，以大端字节序写入值为25的32位整数
+dv.setInt32(0, 25, false);
+
+// 在第5个字节，以大端字节序写入值为25的32位整数
+dv.setInt32(4, 25);
+
+// 在第9个字节，以小端字节序写入值为2.5的32位浮点数
+dv.setFloat32(8, 2.5, true);
+</code></pre>
+<p>如果不确定正在使用的计算机的字节序，可以采用下面的判断方式。</p>
+<pre><code>var littleEndian = (function() &#123;
+  var buffer = new ArrayBuffer(2);
+  new DataView(buffer).setInt16(0, 256, true);
+  return new Int16Array(buffer)[0] === 256;
+&#125;)();
+</code></pre>
+<h4 id="Blob"><a href="#Blob" class="headerlink" title="Blob"></a>Blob</h4><p>Blob 对象表示一个不可变、原始数据的类文件对象。Blob 表示的不一定是JavaScript原生格式的数据。File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。</p>
+<p>要从其他非blob对象和数据构造一个Blob，请使用 Blob() 构造函数。要创建包含另一个blob数据的子集blob，请使用 slice()方法。要获取用户文件系统上的文件对应的Blob对象，请参阅 File文档。</p>
+<p>从Blob中读取内容的唯一方法是使用 FileReader。以下代码将 Blob 的内容作为类型数组读取：</p>
+<pre><code>var reader = new FileReader();
+reader.addEventListener(&quot;loadend&quot;, function() &#123;
+   // reader.result 包含转化为类型数组的blob
+&#125;);
+reader.readAsArrayBuffer(blob);
+</code></pre>
+<p>更多关于Blob的内容，请直接查看<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Blob">这里</a></p>
+<h3 id="数据格式转换"><a href="#数据格式转换" class="headerlink" title="数据格式转换"></a>数据格式转换</h3><h4 id="String转Blob"><a href="#String转Blob" class="headerlink" title="String转Blob"></a>String转Blob</h4><pre><code>//将字符串 转换成 Blob 对象
+var blob = new Blob([&quot;Hello World!&quot;], &#123;
+    type: &#39;text/plain&#39;
+&#125;);
+console.info(blob);
+console.info(blob.slice(1, 3, &#39;text/plain&#39;));
+</code></pre>
+<h4 id="TypeArray转Blob"><a href="#TypeArray转Blob" class="headerlink" title="TypeArray转Blob"></a>TypeArray转Blob</h4><pre><code>//将 TypeArray  转换成 Blob 对象
+var array = new Uint16Array([97, 32, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33]);
+//测试成功
+//var blob = new Blob([array], &#123; type: &quot;application/octet-binary&quot; &#125;);
+//测试成功， 注意必须[]的包裹
+var blob = new Blob([array]);
+//将 Blob对象 读成字符串
+var reader = new FileReader();
+reader.readAsText(blob, &#39;utf-8&#39;);
+reader.onload = function (e) &#123;
+    console.info(reader.result); //a Hello world!
+&#125;
+</code></pre>
+<h4 id="ArrayBuffer转Blob"><a href="#ArrayBuffer转Blob" class="headerlink" title="ArrayBuffer转Blob"></a>ArrayBuffer转Blob</h4><pre><code>var buffer = new ArrayBuffer(32);
+var blob = new Blob([buffer]);       // 注意必须包裹[]
+</code></pre>
+<h4 id="Blob转String"><a href="#Blob转String" class="headerlink" title="Blob转String"></a>Blob转String</h4><p>这里需要注意的是readAsText方法的使用。</p>
+<pre><code>//将字符串转换成 Blob对象
+var blob = new Blob([&#39;中文字符串&#39;], &#123;
+    type: &#39;text/plain&#39;
+&#125;);
+//将Blob 对象转换成字符串
+var reader = new FileReader();
+reader.readAsText(blob, &#39;utf-8&#39;);
+reader.onload = function (e) &#123;
+    console.info(reader.result);
+&#125;
+</code></pre>
+<h4 id="Blob转ArrayBuffer"><a href="#Blob转ArrayBuffer" class="headerlink" title="Blob转ArrayBuffer"></a>Blob转ArrayBuffer</h4><p>这里需要注意的是readAsArrayBuffer方法的使用。</p>
+<pre><code>//将字符串转换成 Blob对象
+var blob = new Blob([&#39;中文字符串&#39;], &#123;
+    type: &#39;text/plain&#39;
+&#125;);
+//将Blob 对象转换成 ArrayBuffer
+var reader = new FileReader();
+reader.readAsArrayBuffer(blob);
+reader.onload = function (e) &#123;
+    console.info(reader.result); //ArrayBuffer &#123;&#125;
+    //经常会遇到的异常 Uncaught RangeError: byte length of Int16Array should be a multiple of 2
+    //var buf = new int16array(reader.result);
+    //console.info(buf);
+
+    //将 ArrayBufferView  转换成Blob
+    var buf = new Uint8Array(reader.result);
+    console.info(buf); //[228, 184, 173, 230, 150, 135, 229, 173, 151, 231, 172, 166, 228, 184, 178]
+    reader.readAsText(new Blob([buf]), &#39;utf-8&#39;);
+    reader.onload = function () &#123;
+        console.info(reader.result); //中文字符串
+    &#125;;
+
+    //将 ArrayBufferView  转换成Blob
+    var buf = new DataView(reader.result);
+    console.info(buf); //DataView &#123;&#125;
+    reader.readAsText(new Blob([buf]), &#39;utf-8&#39;);
+    reader.onload = function () &#123;
+        console.info(reader.result); //中文字符串
+    &#125;;
+&#125;
+</code></pre>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/posts/db34a860.html" title="十条编写优化的 JavaScript 代码的建议"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">上一页: 十条编写优化的 JavaScript 代码的建议</span></a><a class="button is-default" href="/posts/437032b7.html" title="Linux服务器初始化设置用户和ssh公私钥登陆"><span class="has-text-weight-semibold">下一页: Linux服务器初始化设置用户和ssh公私钥登陆</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0 is-family-serif"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/shelby86443093"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/xixi-cmd"><i class="iconfont icon-github"></i></a><!-- Ins--><!-- RSS--><!-- 知乎--><a title="zhihu" target="_blank" rel="noopener nofollow" href="//zhihu.com/people/chenshang-53"><i class="iconfont icon-zhihu"></i></a><!-- 领英--><!-- 脸书--></section><p><span>Copyright ©</span><span> AIENS. 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p><p class="is-flex is-justify-content-center"><a title="Hexo theme author" target="_blank" rel="noopener" href="//github.com/haojen">Theme by Haojen&nbsp;</a></p><div style="margin-top: 2px"><a class="github-button" title="github-button" target="_blank" rel="noopener" href="https://github.com/haojen/hexo-theme-Claudia" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true"></a></div></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>
